@@ -1,0 +1,107 @@
+.filterContent span {
+  display: inline-block;
+  cursor: pointer;
+  padding: 7px 14px;
+  border: solid 2px;
+  border-radius: 10px;
+}
+.filterContent span:nth-child(1) {
+  color: #ff3636;
+  border-color: #ff3636;
+}
+.filterContent span:nth-child(2) {
+  color: #8eff36;
+  border-color: #8eff36;
+}
+.filterContent span:nth-child(3) {
+  color: #ffc736;
+  border-color: #ffc736;
+}
+.filterContent .filter:nth-child(1).selected {
+  color: white;
+  background-color: #ff3636;
+}
+.filterContent .filter:nth-child(2).selected {
+  color: black;
+  background-color: #8eff36;
+}
+.filterContent .filter:nth-child(3).selected {
+  color: black;
+  background-color: #ffc736;
+}
+
+.filterContent span:nth-child(2n) {
+  margin: 0 1em;
+}
+
+.pageNumbers {
+  background-color: #ededed;
+  width: 1em;
+  height: 1em;
+  padding: 0.5em;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+  color: #888;
+}
+
+.pageNumbers:hover {
+  background-color: #8acb88;
+  color: white;
+}
+
+.pageNumbers:active {
+  background-color: #6dbe6a;
+  color: white;
+}
+
+.pageNumbers.active {
+  background-color: #6dbe6a;
+  color: white;
+}
+
+/* Style for Loader */
+.Loader {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.Loader .dots span {
+  display: inline-block;
+  translate:0;
+  margin: 0 4px;
+  height: 15px;
+  width: 15px;
+  border-radius: 100%;
+  background-color: #6dbe6a;
+  animation: loader 1s infinite alternate;
+}
+
+.Loader .dots span:nth-child(2){
+  animation-delay: .2s;
+}
+.Loader .dots span:nth-child(3){
+  animation-delay: .4s;
+}
+.Loader .dots span:nth-child(4){
+  animation-delay: .6s;
+}
+
+.Loader p{
+  margin: 12px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.Loader p::after{
+  content: "...";
+}
+
+@keyframes loader {
+  100%{translate: 0 15px;}
+}
+
