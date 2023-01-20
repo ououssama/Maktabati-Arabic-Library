@@ -8,7 +8,7 @@ export default function ViewContent() {
   const [books, setBooks] = useState([]);
   const [audios, setaudios] = useState([]);
   const [videos, setvideos] = useState([]);
-  const [allContent, setAllContent] = useState([]);
+  const [allContent, setAllContent] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:7000/Books/`,
@@ -41,7 +41,7 @@ export default function ViewContent() {
 
 
   useEffect(() => {
-    setAllContent([books, audios, videos])
+    (books.length || videos.length || audios.length) && setAllContent([books, audios, videos])
   }, [books, audios, videos])
 
 
@@ -53,8 +53,8 @@ export default function ViewContent() {
         <Head />
         <div>
           {
-            allContent ?
-              allContent.map((eachContent) => eachContent.map((Content) => Content.id === parseInt(id) && <DetailPage img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.video} tag={Content.tag} />))
+            allContent?
+              allContent.map((eachContent) => eachContent.map((Content) => (Content.id === parseInt(id) && Content.tag === (type === 'Books'? 'كتاب': type === 'Video' ?'فيديو' : 'اديو')) && <DetailPage img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.video} tag={Content.tag} />))
               :
               <div className="Loader" style={{ height: "calc(100vh - (40px * 2) * 2)" }}>
                 <div className="dots">

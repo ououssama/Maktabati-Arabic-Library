@@ -8,21 +8,66 @@
   </head>
   <body>
     <script>
-      fetch("http://localhost:7000/Contents//", {
-        method: "get",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((Response) => Response.json())
-        .then((data) => console.log(data));
-      //     let data;
-      //   let lb = new Promise((resolve, reject) => {
+      //TODO: for auto search
 
-      //   });
+      // fetch("http://localhost:7000/Books?q=ف", {
+      //   method: "get",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // })
+      //   .then((Response) => Response.json())
+      //   .then((data) => console.log(data));
 
-      //   lb.then((message) => data = message)
-      //   .then((data) => data.map((h) => console.log(h.impression)))
-    </script>
+      //TODO: for update
+
+      //   fetch("http://localhost:7000/Books?q=ف", {
+      //   method: "put",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // })
+      //   .then((Response) => Response.json())
+      //   .then((data) => console.log(data));
+
+      //TODO: to insert new data
+
+      //     let HandelForm = (e) => {
+      //   e.preventDefault();
+      //   // const formData = new FormData(e.target);
+      //   const data = {
+      //     title: e.target.title.value,
+      //     author: e.target.author.value,
+      //     description: e.target.description.value,
+      //     image: photo,
+      //     file: fileName,
+      //     date: new Date()
+      //   }
+      //   fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json"
+      //       },
+      //       body: JSON.stringify(data)
+      //     }).then((Response) => console.log(Response))
+      //     .then((data) => console.log(data))
+      //     .catch((error) => console.error(error))
+      // }
+
+      //TODO: delete book
+    //     fetch(
+    //       `http://localhost:7000/Books/${id}`,
+    //       {
+    //         method: "DELETE",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //       }
+    //     )
+    //       .then((Response) => console.log(Response))
+    //       .then((data) => console.log(data))
+    //       .catch((error) => console.error(error));
+    // </script>
   </body>
 </html>

@@ -57,7 +57,7 @@ function ComposCart() {
   const [books, setBooks] = useState([]);
   const [audios, setaudios] = useState([]);
   const [videos, setvideos] = useState([]);
-  const [allContent, setAllContent] = useState([]);
+  const [allContent, setAllContent] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:7000/Books/`,
@@ -90,7 +90,7 @@ function ComposCart() {
 
 
   useEffect(() => {
-    setAllContent([books, audios, videos])
+    (videos.length) && setAllContent([books, audios, videos])
   }, [books, audios, videos])
 
   // console.log(allContent);
@@ -118,7 +118,7 @@ function ComposCart() {
 
         <Comp>
           {
-            allContent ?
+            allContent?
               allContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 3  && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>

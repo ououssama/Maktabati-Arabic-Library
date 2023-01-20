@@ -253,7 +253,7 @@ function CardUI(btn) {
   let route = useLocation();
   const [routeCheckout, setRouteCheckout] = useState();
   const [viewRate, setViewRate] = useState(0);
-  
+
   useEffect(() => {
     // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname.match(/dashbord/))
@@ -268,7 +268,7 @@ function CardUI(btn) {
           <span style={{ position: "absolute", right: "0", top: "0", padding: "7px 15px", fontSize: "12px", fontWeight: "600", color: btn.tag === "كتاب" ? "#fff" : "#2d2d2", margin: "5px", borderRadius: "10px", backgroundColor: btn.tag === "كتاب" ? "#FF3636" : btn.tag === "فيديو" ? "#FFC736" : "#8EFF36" }}>{btn.tag}</span>
           <Inform>
             {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
-            <More onClick={() => navigate(`/${user}/${user === "admin" ? (routeCheckout !== null) ?  'dashbord/update' : 'view' : "view"}/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More>
+            <More onClick={() => navigate(`/${user}/${user === "admin" ? (routeCheckout !== null) ? 'dashbord/update' : 'view' : "view"}/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More>
           </Inform>
         </div>
 
@@ -399,7 +399,7 @@ function AddPage({ contentType }) {
       file: fileName,
       date: new Date()
     }
-    fetch(`http://localhost:2589/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
+    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
       {
         method: "POST",
         headers: {
@@ -575,7 +575,7 @@ function DetailPage(btn) {
               </div>
 
               <div style={{ maxWidth: '1000px', height: '100%' }} >
-                <video width='100%' controls autoPlay >
+                <video width='100%' style={{ borderRadius: "10px" }} controls autoPlay >
                   < source src={btn.video} type="video/mp4" />
                 </video>
               </div>
@@ -587,13 +587,13 @@ function DetailPage(btn) {
   );
 }
 
-function UpdatePage({ contentType, title, author, description, file }) {
+function UpdatePage({ contentType }) {
 
   const [fileName, setFileName] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [newTitle, setNewTitle] = useState(null)
-  const [newAuthor, setNewAuthor] = useState(null)
-  const [newDesc, setNewDesc] = useState(null)
+  const [newTitle, setNewTitle] = useState({value:"", empty:true})
+  const [newAuthor, setNewAuthor] = useState({value:"", empty:true})
+  const [newDesc, setNewDesc] = useState({value:"", empty:true})
 
 
   // let HandelForm = (e) => {
@@ -619,14 +619,41 @@ function UpdatePage({ contentType, title, author, description, file }) {
   //     .catch((error) => console.error(error))
   // }
 
+  let HandelForm = (e) => {
+    e.preventDefault();
+    // const formData = new FormData(e.target);
+      const data = {
+        title: newTitle.empty? e.target.title.value : newTitle,
+        author: newAuthor.empty? e.target.author.value : newAuthor,
+        description: newDesc.empty ? e.target.description.value : newDesc,
+        image: photo,
+        file: fileName,
+        date: new Date()
+      }
+      fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        }).then((Response) => console.log(Response))
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error))
+  };
+
   const [getData, setGetData] = useState(null)
   let { id, type } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:7000/Contents/`)
+    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`)
       .then(Response => Response.json())
-      .then(data => setGetData(data.Books.filter(book => book.id === parseInt(id))))
+      .then(data => setGetData(data))
   }, [])
+
+  // const isInputEmpty = (newValue, oldValue) => {
+  //   return newValue ? newValue : oldValue
+  // }
 
   return (
     <>
@@ -653,18 +680,18 @@ function UpdatePage({ contentType, title, author, description, file }) {
 
           {/* <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
           <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
-            {getData && getData.map((content) => <>
+            {getData && getData.map((content) => content.id === parseInt(id) && <>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <label htmlFor="title" >العنوان</label>
-                <Input type="text" name="title" value={newTitle ? newTitle : content.title} onChange={(e) => setNewTitle(e.target.value)} />
+                <Input type="text" name="title" value={newTitle.empty? content.title : newTitle.value} onBlur={(e) => setNewTitle({value: e.target.value, empty: e.target.value? false: true} )} onChange={(e) => setNewTitle({value: e.target.value} )}/>
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <label htmlFor="author" >الكاتب</label>
-                <Input type="text" name="author" value={newAuthor ? newAuthor : content.author} onChange={(e) => setNewAuthor(e.target.value)} />
+                <Input type="text" name="author" value={newAuthor.empty? content.author : newAuthor.value} onBlur={(e) => setNewAuthor({value: e.target.value, empty: e.target.value? false: true} )} onChange={(e) => setNewAuthor({value: e.target.value} )} />
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <label htmlFor="description" >الوصف</label>
-                <textarea rows={10} name="description" value={newDesc ? newDesc : content.description} onChange={(e) => setNewDesc(e.target.value)} />
+                <textarea rows={10} name="description" value={newDesc.empty? content.description : newDesc.value} onBlur={(e) => setNewDesc({value: e.target.value, empty: e.target.value? false: true} )} onChange={(e) => setNewDesc({value: e.target.value} )} />
               </div>
             </>)}
             <div>

@@ -189,7 +189,7 @@ function ComposBook() {
 
         <Comp>
           {
-            book ?
+            book.length ?
               book.map((eachContent, i) => i >= (book.length) -5  && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />)
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>
