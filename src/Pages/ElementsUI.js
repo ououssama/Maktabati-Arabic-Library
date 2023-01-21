@@ -254,10 +254,24 @@ function CardUI(btn) {
   const [routeCheckout, setRouteCheckout] = useState();
   const [viewRate, setViewRate] = useState(0);
 
+
+
   useEffect(() => {
     // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname)
   }, [])
+
+  const DeleteContent = (targetedContent) => {
+    fetch(`http://localhost:7000/${btn.type === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}/${targetedContent}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((Response) => console.log(Response.json()))
+  }
 
   return (
     <CardDisplay onMouseEnter={() => setViewRate(viewRate + 1)}>
@@ -270,7 +284,7 @@ function CardUI(btn) {
             routeCheckout && routeCheckout.match(/dashbord/) ?
               <Inform>
                 {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
-                <More>Delete</More>
+                <More onClick={() => DeleteContent(btn.id)}>Delete</More>
                 <More onClick={() => navigate(`/${user}/dashbord/update/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>Update</More>
               </Inform>
               :
@@ -396,17 +410,57 @@ function AddPage({ contentType }) {
   const [fileName, setFileName] = useState("");
   const [photo, setPhoto] = useState(null);
 
+  const [allContent, setAllContent] = useState([]);
+  const [books, setBooks] = useState([]);
+  const [audios, setaudios] = useState([]);
+  const [videos, setvideos] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:7000/Books/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then((Response) => Response.json())
+      .then((data) => setBooks(data))
+
+    fetch(`http://localhost:7000/Audio/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then((Response) => Response.json())
+      .then((data) => setaudios(data))
+    fetch(`http://localhost:7000/Video/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then((Response) => Response.json())
+      .then((data) => setvideos(data))
+
+  }, [])
+
+
+  useEffect(() => {
+    setAllContent([books, audios, videos])
+  }, [books, audios, videos])
 
   let HandelForm = (e) => {
     e.preventDefault();
     // const formData = new FormData(e.target);
     const data = {
+      id: allContent.map((content) => content.id + 1),
+      image: photo,
+      tag: contentType,
       title: e.target.title.value,
       author: e.target.author.value,
       description: e.target.description.value,
-      image: photo,
       file: fileName,
-      date: new Date()
+      date: new Date().toLocaleDateString()
     }
     fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
       {
@@ -604,7 +658,7 @@ function UpdatePage({ contentType }) {
   const [newAuthor, setNewAuthor] = useState({ value: "", empty: true })
   const [newDesc, setNewDesc] = useState({ value: "", empty: true })
   const [newFile, setNewFile] = useState({ value: "", empty: true });
-  
+
   const [getData, setGetData] = useState(null);
   let { id, type } = useParams();
 
@@ -637,14 +691,14 @@ function UpdatePage({ contentType }) {
     const data = {
       id: currentId,
       img: newPhoto.value,
-      tag: type,
+      tag: contentType,
       title: newTitle.empty ? e.target.title.value : newTitle.value,
       author: newAuthor.empty ? e.target.author.value : newAuthor.value,
       description: newDesc.empty ? e.target.description.value : newDesc.value,
       file: newFile.value,
-      // date: new Date()
+      date: new Date().toLocaleDateString()
     }
-    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}/${id}`,
+    fetch(`http://localhost:7000/${type}/${id}`,
       {
         method: "PUT",
         headers: {
@@ -658,7 +712,13 @@ function UpdatePage({ contentType }) {
 
 
   useEffect(() => {
-    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`)
+    fetch(`http://localhost:7000/${type}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
       .then(Response => Response.json())
       .then(data => setGetData(data))
   }, [])
@@ -672,29 +732,29 @@ function UpdatePage({ contentType }) {
       <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
         <h1 style={{ fontSize: "42px" }}>{type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'اديو'}</h1>
         {getData && getData.map((content) => content.id === parseInt(id) && <>
-        <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, cursor: "pointer" }}>
-            <label htmlFor="uploadImage">
-              <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
-                {newPhoto.empty && setNewPhoto({ value: content.img})}
-                  
-                    <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
-                  
-                 { // :
-                  // <p>
-                  //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
-                  //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
-                  // </>
-                }
-                <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name&& setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name? false : true })} />
-              </div>
-            </label>
-          </div>
+          <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+            <div style={{ flex: 1, cursor: "pointer" }}>
+              <label htmlFor="uploadImage">
+                <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+                  {newPhoto.empty && setNewPhoto({ value: content.img })}
 
-          <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
-          {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
+                  <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
+
+                  { // :
+                    // <p>
+                    //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
+                    //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
+                    // </>
+                  }
+                  <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                </div>
+              </label>
+            </div>
+
+            <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
+              {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
               <input value={content.id} hidden disabled />
-              {!currentId&& setCurrentId(content.id)}
+              {!currentId && setCurrentId(content.id)}
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <label htmlFor="title" >العنوان</label>
                 <Input type="text" name="title" value={newTitle.empty ? content.title : newTitle.value} onBlur={(e) => setNewTitle({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewTitle({ value: e.target.value })} />
@@ -707,29 +767,29 @@ function UpdatePage({ contentType }) {
                 <label htmlFor="description" >الوصف</label>
                 <textarea rows={10} name="description" value={newDesc.empty ? content.description : newDesc.value} onBlur={(e) => setNewDesc({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewDesc({ value: e.target.value })} />
               </div>
-            <div>
-              <span>المحتوى</span>
-              <label htmlFor="upload" style={{ cursor: "pointer" }}>
-                <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
-                     { newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1]})}
-                    
-                      <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={(newFile.value.match(pdfRegx)) ? faFilePdf : (newFile.value.match(audioRegx)) ? faFileAudio : (newFile.value.match(videoRegx)) && faFileVideo} size="2xl" color="red" /></span>
-                   
+              <div>
+                <span>المحتوى</span>
+                <label htmlFor="upload" style={{ cursor: "pointer" }}>
+                  <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                    {newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1] })}
+
+                    <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={(newFile.value.match(pdfRegx)) ? faFilePdf : (newFile.value.match(audioRegx)) ? faFileAudio : (newFile.value.match(videoRegx)) && faFileVideo} size="2xl" color="red" /></span>
+
                     {
-                    // <p>
-                    //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                    //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
-                    // </>
+                      // <p>
+                      //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
+                      //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                      // </>
                     }
-                    <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name&& setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name? false: true })} />
-                </div>
-              </label>
-            </div>
-            <Submit type="submit" value="أضف المحتوى" />
-          </form>
-        </div>
-            </>
-            )}
+                    <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                  </div>
+                </label>
+              </div>
+              <Submit type="submit" value="أضف المحتوى" />
+            </form>
+          </div>
+        </>
+        )}
       </div>
     </>
   )

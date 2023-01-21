@@ -55,15 +55,6 @@
       "author": "جيمس كلير"
     },
     {
-      "id": 7,
-      "img": "cover.jpg",
-      "tag": "Books",
-      "title": "demo",
-      "author": "demo",
-      "description": "demo",
-      "file": "branding.pdf"
-    },
-    {
       "id": 8,
       "img": "cover.jpg",
       "tag": "كتاب",
@@ -130,15 +121,6 @@
     },
     {
       "id": 7,
-      "img": "cover.jpg",
-      "tag": "اديو",
-      "file": "branding.pdf",
-      "description": "تلخيص الكتاب",
-      "title": "في قصور الامويين",
-      "author": "جيمس كلير"
-    },
-    {
-      "id": 8,
       "img": "cover.jpg",
       "tag": "اديو",
       "file": "branding.pdf",
