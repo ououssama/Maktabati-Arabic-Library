@@ -49,19 +49,11 @@
       "id": 6,
       "img": "cover.jpg",
       "tag": "كتاب",
-      "file": "branding.pdf",
+      "title": "في قصور الامويينت",
+      "author": "جيمس كلير",
       "description": "تلخيص الكتاب",
-      "title": "في قصور الامويين",
-      "author": "جيمس كلير"
-    },
-    {
-      "id": 8,
-      "img": "cover.jpg",
-      "tag": "كتاب",
       "file": "branding.pdf",
-      "description": "تلخيص الكتاب",
-      "title": "في قصور الامويين",
-      "author": "جيمس كلير"
+      "date": "1/21/2023"
     }
   ],
   "Audio": [
@@ -142,90 +134,81 @@
   "Video": [
     {
       "id": 1,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 2,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 3,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 4,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 5,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 6,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 7,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 8,
-      "video": "/Database/videos/bookvideo.mp4",
       "img": "cover.jpg",
       "tag": "فيديو",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير"
     },
     {
       "id": 9,
-      "video": "/Database/videos/bookvideo.mp4",
       "tag": "فيديو",
       "img": "cover.jpg",
-      "file": "branding.pdf",
+      "file": "bookvideo.mp4",
       "description": "تلخيص الكتاب",
       "title": "في قصور الامويين",
       "author": "جيمس كلير",

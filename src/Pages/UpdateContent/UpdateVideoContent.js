@@ -2,7 +2,7 @@ import React from "react";
 // import { useParams } from "react-router";
 import { UpdatePage, Foot, Head } from "../ElementsUI";
 
-export default function UpdateBook() {
+export default function UpdateVideo() {
 
     return (
         <>

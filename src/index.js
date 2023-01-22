@@ -10,7 +10,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FrontOffice } from './Pages/FrontOffice';
 import Login from './Pages/login';
 import ViewContent from './Pages/contentSections/ViewContent';
-import UpdateBook from './Pages/UpdateContent/UpdateBookContent';
+// import UpdateBook from './Pages/UpdateContent/UpdateBookContent';
+import { UpdatePage } from './Pages/ElementsUI';
+import UpdateBook from './Pages/UpdateContent/UpdateAudioContent';
+import UpdateAudio from './Pages/UpdateContent/UpdateAudioContent';
+import UpdateVideo from './Pages/UpdateContent/UpdateVideoContent';
 
 
 
@@ -36,7 +40,9 @@ root.render(
         <Route path="/:user/Video" element={<AddVideo />} />
         <Route path="/login" element={<Login />} />
         <Route path='/:user/View/:type/:id' element={<ViewContent />} />
-        <Route path='/admin/dashbord/Update/:type/:id' element={<UpdateBook />} />
+        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateBook />} />
+        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateAudio />} />
+        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateVideo />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode >

@@ -118,8 +118,8 @@ function ComposCart() {
 
         <Comp>
           {
-            allContent?
-              allContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 3  && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))
+            allContent ?
+              allContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 3 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>
                 <div className="dots">

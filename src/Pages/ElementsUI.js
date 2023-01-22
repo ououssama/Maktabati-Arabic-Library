@@ -484,7 +484,7 @@ function AddPage({ contentType }) {
               <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
                 {photo ?
                   <>
-                    <img style={{ objectFit: "cover", width: "100%" }} src={`/${photo}`} alt={contentType} />
+                    <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${photo}`} alt={contentType} />
                   </>
                   :
                   <>
@@ -545,7 +545,7 @@ function DetailPage(btn) {
           <div>
             {/* <PIC>
                   </PIC> */}
-            <CoverImg meduim src={btn.img} />
+            <CoverImg meduim src={`/Database/images/${btn.img}`} />
           </div>
 
           <div
@@ -598,7 +598,7 @@ function DetailPage(btn) {
                 height: "100%",
                 // backgroundColor: 'black'
               }}>
-                <CoverImgAudio meduim src={btn.img} />
+                <CoverImgAudio meduim src={`/Database/images/${btn.img}`} />
               </div>
 
             </div>
@@ -639,7 +639,7 @@ function DetailPage(btn) {
 
               <div style={{ maxWidth: '1000px', height: '100%' }} >
                 <video width='100%' style={{ borderRadius: "10px" }} controls autoPlay >
-                  < source src={btn.video} type="video/mp4" />
+                  <source src={`/Database/videos/${btn.video}`} type="video/mp4" />
                 </video>
               </div>
             </div>
@@ -728,70 +728,206 @@ function UpdatePage({ contentType }) {
   // }
 
   return (
-    <>
-      <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
-        <h1 style={{ fontSize: "42px" }}>{type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'اديو'}</h1>
-        {getData && getData.map((content) => content.id === parseInt(id) && <>
-          <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-            <div style={{ flex: 1, cursor: "pointer" }}>
-              <label htmlFor="uploadImage">
-                <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
-                  {newPhoto.empty && setNewPhoto({ value: content.img })}
+    type === "Books" ?
+      <>
+        <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
+          <h1 style={{ fontSize: "42px" }}>كتاب</h1>
+          {getData && getData.map((content) => content.id === parseInt(id) && <div key={content.id}>
+            <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+              <div style={{ flex: 1, cursor: "pointer" }}>
+                <label htmlFor="uploadImage">
+                  <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+                    {newPhoto.empty && setNewPhoto({ value: content.img })}
 
-                  <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
+                    <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
 
-                  { // :
-                    // <p>
-                    //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
-                    //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
-                    // </>
-                  }
-                  <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
-                </div>
-              </label>
-            </div>
-
-            <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
-              {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
-              <input value={content.id} hidden disabled />
-              {!currentId && setCurrentId(content.id)}
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label htmlFor="title" >العنوان</label>
-                <Input type="text" name="title" value={newTitle.empty ? content.title : newTitle.value} onBlur={(e) => setNewTitle({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewTitle({ value: e.target.value })} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label htmlFor="author" >الكاتب</label>
-                <Input type="text" name="author" value={newAuthor.empty ? content.author : newAuthor.value} onBlur={(e) => setNewAuthor({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewAuthor({ value: e.target.value })} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <label htmlFor="description" >الوصف</label>
-                <textarea rows={10} name="description" value={newDesc.empty ? content.description : newDesc.value} onBlur={(e) => setNewDesc({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewDesc({ value: e.target.value })} />
-              </div>
-              <div>
-                <span>المحتوى</span>
-                <label htmlFor="upload" style={{ cursor: "pointer" }}>
-                  <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
-                    {newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1] })}
-
-                    <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={(newFile.value.match(pdfRegx)) ? faFilePdf : (newFile.value.match(audioRegx)) ? faFileAudio : (newFile.value.match(videoRegx)) && faFileVideo} size="2xl" color="red" /></span>
-
-                    {
+                    { // :
                       // <p>
-                      //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                      //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                      //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
+                      //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
                       // </>
                     }
-                    <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                    <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                   </div>
                 </label>
               </div>
-              <Submit type="submit" value="أضف المحتوى" />
-            </form>
+
+              <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
+                {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
+                <input value={content.id} hidden disabled />
+                {!currentId && setCurrentId(content.id)}
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <label htmlFor="title" >العنوان</label>
+                  <Input type="text" name="title" value={newTitle.empty ? content.title : newTitle.value} onBlur={(e) => setNewTitle({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewTitle({ value: e.target.value })} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <label htmlFor="author" >الكاتب</label>
+                  <Input type="text" name="author" value={newAuthor.empty ? content.author : newAuthor.value} onBlur={(e) => setNewAuthor({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewAuthor({ value: e.target.value })} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <label htmlFor="description" >الوصف</label>
+                  <textarea rows={10} name="description" value={newDesc.empty ? content.description : newDesc.value} onBlur={(e) => setNewDesc({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewDesc({ value: e.target.value })} />
+                </div>
+                <div>
+                  <span>المحتوى</span>
+                  <label htmlFor="upload" style={{ cursor: "pointer" }}>
+                    <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                      {newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1] })}
+
+                      <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFilePdf} size="2xl" color="red" /></span>
+
+                      {
+                        // <p>
+                        //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
+                        //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                        // </>
+                      }
+                      <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                    </div>
+                  </label>
+                </div>
+                <Submit type="submit" value="أضف المحتوى" />
+              </form>
+            </div>
+          </div>
+          )}
+        </div>
+      </>
+
+      :
+
+      (type === "Audio") ?
+        <>
+          <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
+            <h1 style={{ fontSize: "42px" }}>اديو</h1>
+            {getData && getData.map((content) => content.id === parseInt(id) && <div key={content.id}>
+              <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, cursor: "pointer" }}>
+                  <label htmlFor="uploadImage">
+                    <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+                      {newPhoto.empty && setNewPhoto({ value: content.img })}
+
+                      <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
+
+                      { // :
+                        // <p>
+                        //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
+                        //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
+                        // </>
+                      }
+                      <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                    </div>
+                  </label>
+                </div>
+
+                <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
+                  {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
+                  <input value={content.id} hidden disabled />
+                  {!currentId && setCurrentId(content.id)}
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="title" >العنوان</label>
+                    <Input type="text" name="title" value={newTitle.empty ? content.title : newTitle.value} onBlur={(e) => setNewTitle({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewTitle({ value: e.target.value })} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="author" >صاحب الأديو</label>
+                    <Input type="text" name="author" value={newAuthor.empty ? content.author : newAuthor.value} onBlur={(e) => setNewAuthor({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewAuthor({ value: e.target.value })} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="description" >الوصف</label>
+                    <textarea rows={10} name="description" value={newDesc.empty ? content.description : newDesc.value} onBlur={(e) => setNewDesc({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewDesc({ value: e.target.value })} />
+                  </div>
+                  <div>
+                    <span>المحتوى</span>
+                    <label htmlFor="upload" style={{ cursor: "pointer" }}>
+                      <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                        {newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1] })}
+
+                        <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFileAudio} size="2xl" color="red" /></span>
+
+                        {
+                          // <p>
+                          //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
+                          //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                          // </>
+                        }
+                        <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                      </div>
+                    </label>
+                  </div>
+                  <Submit type="submit" value="أضف المحتوى" />
+                </form>
+              </div>
+            </div>
+            )}
           </div>
         </>
-        )}
-      </div>
-    </>
+        :
+
+        type === 'Video'  &&
+        <>
+          <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
+            <h1 style={{ fontSize: "42px" }}>فيديو</h1>
+            {getData && getData.map((content) => content.id === parseInt(id) && <div key={content.id}>
+              <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, cursor: "pointer" }}>
+                  <label htmlFor="uploadImage">
+                    <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+                      {newPhoto.empty && setNewPhoto({ value: content.img })}
+
+                      <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
+
+                      { // :
+                        // <p>
+                        //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
+                        //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
+                        // </>
+                      }
+                      <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                    </div>
+                  </label>
+                </div>
+
+                <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
+                  {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
+                  <input value={content.id} hidden disabled />
+                  {!currentId && setCurrentId(content.id)}
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="title" >العنوان</label>
+                    <Input type="text" name="title" value={newTitle.empty ? content.title : newTitle.value} onBlur={(e) => setNewTitle({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewTitle({ value: e.target.value })} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="author" >صاحب الفيديو</label>
+                    <Input type="text" name="author" value={newAuthor.empty ? content.author : newAuthor.value} onBlur={(e) => setNewAuthor({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewAuthor({ value: e.target.value })} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <label htmlFor="description" >الوصف</label>
+                    <textarea rows={10} name="description" value={newDesc.empty ? content.description : newDesc.value} onBlur={(e) => setNewDesc({ value: e.target.value, empty: e.target.value ? false : true })} onChange={(e) => setNewDesc({ value: e.target.value })} />
+                  </div>
+                  <div>
+                    <span>المحتوى</span>
+                    <label htmlFor="upload" style={{ cursor: "pointer" }}>
+                      <div style={{ backgroundColor: "#9992", border: "solid #9996", height: "10em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", borderRadius: "10px" }}>
+                        {newFile.empty && setNewFile({ value: content.file.split('/')[content.file.split('/').length - 1] })}
+
+                        <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFileVideo} size="2xl" color="red" /></span>
+
+                        {
+                          // <p>
+                          //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
+                          //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                          // </>
+                        }
+                        <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
+                      </div>
+                    </label>
+                  </div>
+                  <Submit type="submit" value="أضف المحتوى" />
+                </form>
+              </div>
+            </div>
+            )}
+          </div>
+        </>
   )
 }
 

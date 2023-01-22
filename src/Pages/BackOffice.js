@@ -22,7 +22,22 @@ box-sizing: border-box;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
 }
 `
-
+const LastAdded = styled.div`
+display: flex;
+flex-direction: row;
+overflow-x: scroll;
+gap: 20px;
+width: 100%;
+direction: rtl;
+padding-bottom: 1em;
+&::-webkit-scrollbar {
+  height: 5px;
+}
+&::-webkit-scrollbar-thumb {
+  background-color: #73a580;
+  border-radius: 10px;
+}
+`
 export default function BackOfficeUI() {
 
     let counter = -1;
@@ -80,9 +95,9 @@ export default function BackOfficeUI() {
             <Head />
             <div style={{ margin: "4em 4em" }}>
                 <h1>أحدث الإضافات</h1>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr", gridAutoColumns: "auto", gap: "30px", boxSizing: "border-box", overflowX: 'scroll' }}>
+                <LastAdded>
                     {allContent && allContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 2 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))}
-                </div>
+                </LastAdded>
             </div>
             <div style={{ margin: "4em 4em" }}>
                 <h1>محتوى المضاف</h1>
