@@ -422,12 +422,12 @@ function CardUI(btn) {
 }
 function Head() {
 
-  const [query, setQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState();
   const SearchOpen = useRef();
-  const [searchBarVisiblity, setSearchBarVisiblity] = useState(false)
+  const [searchBarVisiblity, setSearchBarVisiblity] = useState(true)
   const isInsideSearchBar = useRef();
   const [listVisiblity, setListVisiblity] = useState(false)
-  const [allContent, setAllContent] = useState(null);
+  const [allContent, setAllContent] = useState([]);
   // const [searchButtonVisibility, setSearchButtonVisibility] = useState(false)
   const [iconHoverBook, setIconHoverBook] = useState(false);
   const [iconHoverAudio, setIconHoverAudio] = useState(false);
@@ -439,7 +439,7 @@ function Head() {
 
 
   useEffect(() => {
-    fetch(`http://localhost:7000/Books?q=${query}`,
+    fetch(`http://localhost:7000/Books?title_like=^${searchQuery}`,
       {
         method: "GET",
         headers: {
@@ -448,25 +448,25 @@ function Head() {
       }).then((Response) => Response.json())
       .then((data) => data)
       .then((data2) =>
-        fetch(`http://localhost:7000/Audio?q=${query}`,
+        fetch(`http://localhost:7000/Audio?title_like=^${searchQuery}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json"
             },
           }).then((Response) => Response.json())
-          .then((data) => [data2, data])
+          .then((data) => [...data2, ...data])
       ).then((data3) =>
-        fetch(`http://localhost:7000/Video?q=${query}`,
+        fetch(`http://localhost:7000/Video?title_like=^${searchQuery}`,
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json"
             },
           }).then((Response) => Response.json())
-          .then((data) => setAllContent([...data3, data])))
+          .then((data) => setAllContent([...data3, ...data])))
 
-  }, [query])
+  }, [searchQuery])
 
   useEffect(() => {
     window.onclick = (e) => {
@@ -475,25 +475,17 @@ function Head() {
       } else {
         setMenuToggel(false);
       }
-
-      if (e.target === isInsideSearchBar.current) {
-        setListVisiblity(true)
-        // console.log(isInsideSearchBar.current);
-      } else {
-        // if(event.target.contains(isSelected.current)){
-        //   setListVisiblity(false)
-        //   console.log('true');
-        // } else {
-        // console.log(isInsideSearchBar.current);
-        setSearchBarVisiblity(false);
-        setListVisiblity(false)
+      if (window.innerWidth <= 768) {
+        if (e.target === SearchOpen.current) {
+          setSearchBarVisiblity(true);
+        }
       }
+    }
 
-
-      if (e.target === SearchOpen.current) {
-        setSearchBarVisiblity(true);
-        console.log(e.target.childNode);
-      }
+    if (searchQuery) {
+      setListVisiblity(true)
+    } else {
+      setListVisiblity(false)
     }
 
     window.onresize = () => {
@@ -505,6 +497,7 @@ function Head() {
         // setSearchButtonVisibility(false)
       }
     }
+
   })
 
   return (
@@ -513,11 +506,11 @@ function Head() {
         <>
           <Link to="/admin" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
-            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {query ?
-                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" alt={result.title} /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
+              {searchQuery ?
+                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" alt={result.title} /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
@@ -555,11 +548,11 @@ function Head() {
         <>
           <Link to="/user" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
-            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {query ?
-                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
+              {allContent.length?
+                allContent.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>)
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
@@ -583,11 +576,11 @@ function Head() {
         <>
           <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
-            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {query ?
-                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
+              {searchQuery ?
+                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
