@@ -105,3 +105,11 @@
   100%{translate: 0 15px;}
 }
 
+.more-link{
+  text-decoration: none;
+  color: #4EAA4B;
+}
+
+.more-link:active{
+  color: #3a8038;
+}

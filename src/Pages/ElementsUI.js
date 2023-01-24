@@ -43,6 +43,8 @@ const Header = styled.header`
     align-items: center;
     height: 70px;
     background-color: #8acb88;
+    gap: 4em;
+    position: relative;
     `
 
 
@@ -61,16 +63,36 @@ const Button = styled.button`
      &:hover{
          background-color: #418E3E;
     };
+     &:active{
+     background-color: #3a8038;
+};
     
     ${props => props.second && css`
       font-size: 18px;
     `};
     `
+const SearchBar = styled.div`
+    width: 100%; 
+    max-width: 700px; 
+    position: relative;
+    display: block;
+    @media only screen and (max-width: 768px){
+      display:'none';
+      position: absolute;
+      width: 100%;
+      // min-width: 100%;
+      padding: 0 15px;
+      right: 0;
+      box-sizing: border-box;
+      flex: 1;
+    }
+    `
+
 const InputSearch = styled.input`
   width: 100%;
-  background-color: #04AA6D;
+  background-color: #69ad67;
   color: white;
-  box-sizing:border-box;
+  box-sizing: border-box;
   padding: 12px 50px;
   border: none;
   border-radius: 4px;
@@ -89,6 +111,50 @@ const InputSearch = styled.input`
   }
 
 `
+
+const SerachResulte = styled.div`
+  position: absolute;
+  top: 3.5em;
+  width: 100%;
+  padding: 15px;
+  background: white;
+  box-shadow: 0 10px 13px 0px #00000026;
+  box-sizing: border-box;
+  border-radius: 5px;
+  text-align: center;
+  z-index: 10;
+  @media only screen and (max-width: 768px){
+    width: calc(100% - 30px);
+  }
+`
+
+const QueryResult = styled.div`
+  position: relative;
+  color: #36bf31;
+  z-index: 1;
+  cursor: pointer;
+  text-align: start;
+  padding: 5px 5px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap:10px;
+  &:hover{
+    border-radius:5px;
+    background-color: #0000000a;
+  }
+`
+
+const SearchButton = styled.div`
+  background-color: #4EAA4B; 
+  border-radius: 10px;  
+  cursor: pointer;
+  display: none;
+@media only screen and (max-width: 768px){
+    display: inherit;
+  }
+`
+
 // Style for header components
 const Footer = styled.footer`
 //  position: absolute;
@@ -133,6 +199,15 @@ const DropDownMenu = styled.ul`
  left: 0;
  top: 2em;
  border-radius: 5px;
+ z-index: 10;
+`
+
+const P = styled.p`
+ margin: 0;
+ display: block;
+ @media only screen and (max-width: 600px){
+  display: none;
+ }
 `
 
 // styled components for add content page
@@ -302,15 +377,53 @@ function CardUI(btn) {
     </CardDisplay>
   );
 }
-
 function Head() {
 
+  const [query, setQuery] = useState();
+  const SearchOpen = useRef();
+  const [searchBarVisiblity, setSearchBarVisiblity] = useState(false)
+  const isInsideSearchBar = useRef();
+  const [listVisiblity, setListVisiblity] = useState(false)
+  const [allContent, setAllContent] = useState(null);
+// const [searchButtonVisibility, setSearchButtonVisibility] = useState(false)
   const [iconHoverBook, setIconHoverBook] = useState(false);
   const [iconHoverAudio, setIconHoverAudio] = useState(false);
   const [iconHoverVideo, setIconHoverVideo] = useState(false);
   const [menuToggel, setMenuToggel] = useState(false);
   const insideButton = useRef();
-  const { user } = useParams()
+  const { user } = useParams();
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    fetch(`http://localhost:7000/Books?q=${query}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then((Response) => Response.json())
+      .then((data) => data)
+      .then((data2) =>
+        fetch(`http://localhost:7000/Audio?q=${query}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => [data2, data])
+    ).then((data3) => 
+    fetch(`http://localhost:7000/Video?q=${query}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    }).then((Response) => Response.json())
+    .then((data) => setAllContent([...data3, data])))
+
+  }, [query])
 
   useEffect(() => {
     window.onclick = (e) => {
@@ -320,6 +433,34 @@ function Head() {
         setMenuToggel(false);
       }
 
+      if (e.target === isInsideSearchBar.current) {
+        setListVisiblity(true)
+        // console.log(isInsideSearchBar.current);
+      } else {
+        // if(event.target.contains(isSelected.current)){
+        //   setListVisiblity(false)
+        //   console.log('true');
+        // } else {
+        // console.log(isInsideSearchBar.current);
+        setSearchBarVisiblity(false);
+        setListVisiblity(false)
+      }
+
+      
+      if (e.target === SearchOpen.current) {
+        setSearchBarVisiblity(true);
+        console.log(e.target.childNode);
+      }
+    }
+
+    window.onresize = () => {
+      if(window.innerWidth <= 768){
+        setSearchBarVisiblity(false)
+        // setSearchButtonVisibility(true)
+      } else {
+        setSearchBarVisiblity(true)
+        // setSearchButtonVisibility(false)
+      }
     }
   })
 
@@ -328,12 +469,27 @@ function Head() {
       {user === "admin" ? (
         <>
           <Link to="/admin" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
+            <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
+            <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
+              {query ?
+                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                :
+                <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
+              }
+            </SerachResulte>
+
+          </SearchBar>
           <div>
-            <div style={{ display: "flex", gap: "3em", alignItems: "center" }}>
-              <div style={{ position: "relative", width: "fit-content" }}>
+            <div style={{ display: "flex", gap: "2em", alignItems: "center" }}>
+            <SearchButton>
+              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
+            </SearchButton>
+              <div style={{ position: "relative", width: "max-content" }}>
                 <Button ref={insideButton}>
                   <FontAwesomeIcon icon={faPlusCircle} />
-                  <p style={{ margin: 0 }}>أضف محتوى</p>
+                  <P>أضف محتوى</P>
                 </Button>
                 <DropDownMenu style={{ display: menuToggel ? "block" : "none" }}>
                   <Link to="/admin/book" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverBook(true)} onMouseLeave={() => setIconHoverBook(false)}><FontAwesomeIcon icon={faBook} color={iconHoverBook ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>كتاب</p></Li></Link>
@@ -355,25 +511,50 @@ function Head() {
       ) : user === "user" ? (
         <>
           <Link to="/user" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
-          <div style={{ width: '700px', position: "relative" }}>
-            <InputSearch type='search' placeholder='البحت' />
+          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
-          </div>
-          <div>
+            <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
+              {query ?
+                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                :
+                <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
+              }
+            </SerachResulte>
+
+          </SearchBar>
+          <div style={{ display: 'flex', alignItems: 'center', gap: "25px" }}>
+              <SearchButton>
+              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
+            </SearchButton>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <p style={{ color: "white", fontWeight: "500" }}>المستعمل</p>
               <div style={{ backgroundColor: "white", width: "35px", height: "35px", borderRadius: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <FontAwesomeIcon icon={faUser} color="#4EAA4B" />
               </div>
 
-
             </div>
           </div>
         </>
       ) : (
         <>
-          <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
-          <div>
+              <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+              <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+            <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
+            <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
+            <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
+              {query ?
+                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                :
+                <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
+              }
+            </SerachResulte>
+
+          </SearchBar>
+              <div style={{ display: 'flex', alignItems: 'center', gap: "25px" }}>
+              <SearchButton>
+              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
+            </SearchButton>
             <Link style={{ textDecoration: "none" }} to='/login'>
               <Button>تسجيل الدخول</Button>
             </Link>
@@ -393,9 +574,9 @@ function Foot() {
         <Logo>مكتبتي</Logo>
       </div>
       <div >
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline-block" }}>الكتب</span>
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline-block" }}>الفديوهات</span>
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline-block" }}>أوديو</span>
+        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>الكتب</span>
+        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>الفديوهات</span>
+        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>أوديو</span>
       </div>
       <div>
         <PC>@copyright 2022-2023</PC>
@@ -637,7 +818,7 @@ function DetailPage(btn) {
                 </Button>
               </div>
 
-              <div style={{ maxWidth: '1000px', height: '100%' }} >
+              <div style={{ maxWidth: '1000px', width: "100%", height: '100%' }} >
                 <video width='100%' style={{ borderRadius: "10px" }} controls autoPlay >
                   <source src={`/Database/videos/${btn.video}`} type="video/mp4" />
                 </video>
@@ -863,7 +1044,7 @@ function UpdatePage({ contentType }) {
         </>
         :
 
-        type === 'Video'  &&
+        type === 'Video' &&
         <>
           <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
             <h1 style={{ fontSize: "42px" }}>فيديو</h1>
@@ -931,4 +1112,8 @@ function UpdatePage({ contentType }) {
   )
 }
 
-export { CardUI, Head, Foot, AddPage, DetailPage, UpdatePage };
+function AllContents({}) {
+  <CardUI />
+}
+
+export { CardUI, Head, Foot, AddPage, DetailPage, UpdatePage, AllContents };

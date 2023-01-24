@@ -97,6 +97,7 @@
 import React, { useState, useEffect } from "react";
 import { CardUI } from "../ElementsUI";
 import styled from "styled-components";
+import { Link, useParams } from "react-router-dom";
 
 
 const Container = styled.div`
@@ -134,6 +135,9 @@ const Comp = styled.div`
     background-color: #73a580;
     border-radius: 10px;
   }
+  &::-webkit-scrollbar-track{
+    background-color: hsl(118, 20%, 85%);
+  }
 `;
 
 const Info = styled.div`
@@ -148,6 +152,7 @@ const Info = styled.div`
 function ComposBook() {
 
   const [book, setBook] = useState([]);
+  const { user } = useParams();
 
   useEffect(() => {
     fetch(`http://localhost:7000/Books/`,
@@ -170,21 +175,8 @@ function ComposBook() {
       {/* <Slide> */}
       <Div>
         <Info>
-          <h1
-            style={{
-              color: "#384b3d",
-              margin: 0,
-            }}
-          >
-            الكتب
-          </h1>
-          <h4
-            style={{
-              margin: 0,
-            }}
-          >
-            المزيد
-          </h4>
+          <h1 style={{color: "#384b3d",margin: 0}}>الكتب</h1>
+          <Link className="more-link" to={`/${user}/Books`}><h4 style={{ margin: 0, }}>المزيد</h4></Link>
         </Info>
 
         <Comp>

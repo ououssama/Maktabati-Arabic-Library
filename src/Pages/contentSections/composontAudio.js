@@ -110,6 +110,7 @@
 import React, { useState, useEffect } from "react";
 import { CardUI } from "../ElementsUI";
 import styled from "styled-components";
+import { Link, useParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -146,6 +147,9 @@ const Comp = styled.div`
     background-color: #73a580;
     border-radius: 10px;
   }
+  &::-webkit-scrollbar-track{
+    background-color: hsl(118, 20%, 85%);
+  }
 `;
 
 const Info = styled.div`
@@ -155,11 +159,10 @@ const Info = styled.div`
 `;
 
 
-
-
 function ComposAudio() {
 
   const [audio, setAudio] = useState([]);
+  const { user } = useParams();
 
   useEffect(() => {
     fetch(`http://localhost:7000/Audio/`,
@@ -181,26 +184,13 @@ function ComposAudio() {
       {/* <Slide> */}
       <Div>
         <Info>
-          <h1
-            style={{
-              color: "#384b3d",
-              margin: 0,
-            }}
-          >
-            اديوهات
-          </h1>
-          <h4
-            style={{
-              margin: 0,
-            }}
-          >
-            المزيد
-          </h4>
+          <h1 style={{ color: "#384b3d", margin: 0 }}>اديوهات</h1>
+          <Link className="more-link" to={`/${user}/Audios`}><h4 style={{ margin: 0 }}>المزيد</h4></Link>
         </Info>
 
-        <Comp>
+        <Comp className="section-scroll">
           {
-            audio.length?
+            audio.length ?
               audio.map((eachContent, i) => i >= (audio.length) - 5 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />)
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>

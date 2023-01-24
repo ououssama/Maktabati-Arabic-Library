@@ -54,7 +54,7 @@ export default function ViewContent() {
         <div>
           {
             allContent?
-              allContent.map((eachContent) => eachContent.map((Content) => (Content.id === parseInt(id) && Content.tag === (type === 'Books'? 'كتاب': type === 'Video' ?'فيديو' : 'اديو')) && <DetailPage img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.video} tag={Content.tag} />))
+              allContent.map((eachContent) => eachContent.map((Content) => (Content.id === parseInt(id) && Content.tag === (type === 'Books'? 'كتاب': type === 'Video' ?'فيديو' : 'اديو')) && <DetailPage img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.file} tag={Content.tag} />))
               :
               <div className="Loader" style={{ height: "calc(100vh - (40px * 2) * 2)" }}>
                 <div className="dots">

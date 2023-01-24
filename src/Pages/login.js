@@ -1,48 +1,83 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
-  width: 100%;
   height: 100vh;
+  direction: rtl;
+  background: url("./Database/kindle_ebook.jpg"), #73a580;
+  background-blend-mode: multiply;
+  objectFit: cover;
+  @media only screen and (max-width: 992px){
+    background-blend-mode: overlay;
+    justify-content: center;
+  }
 `;
 
 const Form = styled.form`
-  display: grid;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  background-color: #73a580;
-  text-align: center;
+  gap: 15px;
+  text-align: start;
   border-radius: 10px;
-  padding: 3em;
-  width: fit-content;
+  padding: 3em 4em 6em;
+  width: 100%;
+  background-color: white;
+  height: 100%;
+  box-sizing: border-box;
+  @media only screen and (min-width: 600px){
+    height: max-content;
+    width: 60%;
+  }
+  @media only screen and (min-width: 786px){
+    height: max-content;
+    width: 50%;
+  }
+  @media only screen and (min-width: 992px){
+    border-radius: 10px 0 0 10px;
+    height: 100%;
+    width: 50%;
+  }
 `;
 const H1 = styled.h1`
-  font-size: 40px;
-  color: white;
-  margin: 0;
+  font-size: 64px;
+  color: #73a580;
+  margin: 0 0 12px;
 `;
 
+const InputContainer = styled.div`
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+  width:100%;
+  max-width: 360px;
+  min-width: 250px;
+`
 const Label = styled.label`
-  text-align: end;
   font-size: 18px;
-  color: white;
+  color: #73a580;
+  text-align: start;
 `;
 
 const Input = styled.input`
-  color: white;
+  color: black;
+  font-size: 18px;
   direction: rtl;
   border: none;
-  height: 20px;
-  width: 290px;
+  // height: 20px;
+  width: 100%;
   padding: 20px;
   background-color: #c5c39294;
   border-radius: 5px;
-  padding-left: 30px;
+  box-sizing: border-box;
+  // padding-left: 30px;
   &:focus,
   &:hover,
   &:active {
@@ -50,17 +85,13 @@ const Input = styled.input`
   }
 `;
 
-const Btn = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const SubmitBtn = styled.input`
   margin-top: 30px;
   font-size: 19px;
   height: 60px;
-  width: 290px;
+    width:100%;
+  max-width:360px;
+  min-width:250px;
   color: white;
   background-color: rgb(244, 247, 247);
   border-radius: 5px;
@@ -78,8 +109,8 @@ function Login() {
   const adminUser = { username: "hiba", pass: "54321" };
   const [userName, setUserName] = useState("");
   const [pass, setPass] = useState("");
-  const [userspan, setUserspan] = useState("");
-  const [passspan, setPassspan] = useState("");
+  const [userAuth, setUserAuth] = useState(true);
+  const [passAuth, setPassAuth] = useState(true);
     let bridge = useNavigate();
 
   const handleForm = (e) => {
@@ -94,40 +125,50 @@ function Login() {
   };
 // la function de test l input 
 const  handlerTest=()=>{
-  if (userName!=='oussama' || userName!=='hiba'){
-    setUserspan('اسم المستخدم خطا المرجو المحاولة مرة اخرى')
+  if (userName === regularUser.username) {
+    setUserAuth(true);
+    if ( pass === regularUser.pass) {
+      setPassAuth(true);
+    } else {
+      setPassAuth(false)
+    }
+  } else {
+    setUserAuth(false);
+    if ( pass === regularUser.pass) {
+      setPassAuth(true);
+    } else {
+      setPassAuth(false)
+    }
   }
-  if(pass!=='12345'|| pass!=='54321'){
-    setPassspan(' الرقم السري خطا المرجو المحاولة مرة اخرى')
-  }
+
 }
   return (
     <>
       <Container>
         <Form action='' onSubmit={(e) => handleForm(e)}>
           <H1>مكتبتي</H1>
-          <Label>اسم المستخدم</Label>
-          <div>
+          <InputContainer>
             {" "}
+          <Label>اسم المستخدم</Label>
             <Input
               type='text'
               id='name'
               onChange={(e) => setUserName(e.target.value)}
-            /><br /><span style={{color:'red'}}>{userspan}</span>
-          </div>
-          <Label>الرمز السري</Label>
-          <div>
+            /><span style={{display: userAuth? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline'}}>اسم المستخدم خطا المرجو المحاولة مرة اخرى</p></span>
+          </InputContainer>
+
+          <InputContainer>
+            <Label>الرمز السري</Label>
             <Input
               type='password'
               id='password'
               onChange={(e) => setPass(e.target.value)}
             />
-            <br /><span style={{ color: 'red' }}>{passspan}</span>
-          </div>
+            <span style={{ display: passAuth? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline'}}>الرقم السري خطا المرجو المحاولة مرة اخرى</p></span>
+          </InputContainer>
 
-          <Btn>
-              <SubmitBtn type='submit' value="تسجيل الدخول" onClick={handlerTest} />
-          </Btn>
+          <SubmitBtn type='submit' value="تسجيل الدخول" onClick={handlerTest} />
+
         </Form>
       </Container>
     </>
