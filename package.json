@@ -20,7 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server --port 7000 --watch ./public/Content.json"
+    "server": "json-server --port 7000 --watch ./public/Content.json",
+    "network": "json-server --port 7000 --watch ./public/Content.json -H 19.168.1.5"
   },
   "eslintConfig": {
     "extends": [

@@ -42,7 +42,7 @@ export default function AllContents() {
                             "Content-Type": "application/json"
                         },
                     }).then((Response) => Response.json())
-                    .then((data) => [data2, data])
+                    .then((data) => [...data2, ...data])
             ).then((data3) =>
                 fetch(`http://localhost:7000/Video`,
                     {
@@ -51,7 +51,7 @@ export default function AllContents() {
                             "Content-Type": "application/json"
                         },
                     }).then((Response) => Response.json())
-                    .then((data) => setAllContent([...data3, data])))
+                    .then((data) => setAllContent([...data3, ...data])))
 
     }, [])
     return (
@@ -61,7 +61,7 @@ export default function AllContents() {
                     {
                          allContent?
                         <ContentContainer>
-                            {allContent.map((Content) => Content.map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))}
+                            {allContent.sort(((a,b) => b.impression - a.impression)).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)}
                         </ContentContainer>
                            :
                             <div className="Loader" style={{height:"calc(100vh - 180px)"}}>

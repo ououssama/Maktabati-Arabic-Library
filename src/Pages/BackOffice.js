@@ -64,20 +64,10 @@ padding: 10px 14px;
 
 export default function BackOfficeUI() {
 
-  // let counter = -1;
-  // let arr = [];
-  // let pageNumber = [];
-  // const [page, setPage] = useState(0);
-  // const [current, setCurrent] = useState("");
   const [page, setPage] = useState(1)
   const [allContent, setAllContent] = useState([]);
   const [latestContent, setLatestContent] = useState([]);
 
-  // const [randContent, setRandContent] = useState([])
-
-  const [books, setBooks] = useState([]);
-  const [audios, setaudios] = useState([]);
-  const [videos, setvideos] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:7000/Books?_page=${page}&_limit=3`,
@@ -96,7 +86,7 @@ export default function BackOfficeUI() {
               "Content-Type": "application/json"
             },
           }).then((Response) => Response.json())
-          .then((data) => [data2, data])
+          .then((data) => [...data2, ...data])
     ).then((data3) => 
     fetch(`http://localhost:7000/Video?_page=${page}&_limit=3`,
     {
@@ -105,7 +95,7 @@ export default function BackOfficeUI() {
         "Content-Type": "application/json"
       },
     }).then((Response) => Response.json())
-    .then((data) => setAllContent([...data3, data])))
+    .then((data) => setAllContent([...data3, ...data])))
 
   }, [page])
 
@@ -126,7 +116,7 @@ export default function BackOfficeUI() {
               "Content-Type": "application/json"
             },
           }).then((Response) => Response.json())
-          .then((data) => [data2, data])
+          .then((data) => [...data2, ...data])
     ).then((data3) => 
     fetch(`http://localhost:7000/Video`,
     {
@@ -135,9 +125,9 @@ export default function BackOfficeUI() {
         "Content-Type": "application/json"
       },
     }).then((Response) => Response.json())
-    .then((data) => setLatestContent([...data3, data])))
+    .then((data) => setLatestContent([...data3, ...data])))
 
-  }, [null])
+  }, [])
 
   return (
     <>
@@ -145,7 +135,7 @@ export default function BackOfficeUI() {
       <div style={{ margin: "4em 4em" }}>
         <h1>أحدث الإضافات</h1>
         <LastAdded>
-          {latestContent && latestContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 2 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))}
+          {latestContent && latestContent.sort(((a,b) => b.date - a.date)).map((Content, i) => i < 6 && <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)}
         </LastAdded>
       </div>
       <div style={{ margin: "4em 4em" }}>
@@ -153,12 +143,12 @@ export default function BackOfficeUI() {
         <ContentContainer>
           {
             allContent && (
-              allContent && allContent.map((Content) => Content.map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))
+              allContent && allContent.sort(((a,b) => b.date - a.date)).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)
             )}
         </ContentContainer>
         <div style={{ display: "flex", gap: "5px", height: "min-content", justifyContent: "center", marginTop: "3em" }}>
           <Pagination onClick={() => setPage(page - 1)} disabled={page < 2 ? true : false}>السابق</Pagination>
-          <Pagination onClick={() => setPage( page + 1)} disabled={allContent[0]?.length === 0 || allContent[1]?.length === 0 || allContent[2]?.length <= 0? true : false}>التالي</Pagination>
+          <Pagination onClick={() => setPage( page + 1)} disabled={allContent.length? false : true}>التالي</Pagination>
         </div>
       </div>
       <Foot />

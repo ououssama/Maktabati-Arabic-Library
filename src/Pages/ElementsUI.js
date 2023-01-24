@@ -51,6 +51,7 @@ const Header = styled.header`
 const Button = styled.button`
     display: flex;
     align-items: center;
+    width: max-content;
     gap: 7px;
     cursor: pointer;
     border-radius: 5px;
@@ -60,13 +61,21 @@ const Button = styled.button`
     color: white;
     font-family: 'Cairo', sans-serif;
     padding: 10px 14px;
+
      &:hover{
          background-color: #418E3E;
     };
      &:active{
      background-color: #3a8038;
+
 };
-    
+    ${props => props.admin && css`
+    @media only screen and (max-width: 600px){
+      padding: 14px;
+      border-radius: 100%;
+    }
+    `};
+
     ${props => props.second && css`
       font-size: 18px;
     `};
@@ -155,6 +164,17 @@ const SearchButton = styled.div`
   }
 `
 
+const AddContentButton = styled.div`
+  position: relative;
+  width: max-content;
+  @media only screen and (max-width: 600px){
+    z-index: 20;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+  }
+`
+
 // Style for header components
 const Footer = styled.footer`
 //  position: absolute;
@@ -200,6 +220,10 @@ const DropDownMenu = styled.ul`
  top: 2em;
  border-radius: 5px;
  z-index: 10;
+ @media only screen and (max-width: 600px){
+  translate: calc(-100% + 40px) calc(-100% - 55px);
+  width: max-content;
+ }
 `
 
 const P = styled.p`
@@ -334,7 +358,26 @@ function CardUI(btn) {
   useEffect(() => {
     // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname)
-  }, [])
+  }, [route.pathname])
+
+  useEffect(() => {
+    if (viewRate) {
+      const data = {
+        impression: btn.impression + 1
+      }
+      fetch(`http://localhost:7000/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+        }).then((Response) => Response.json())
+        .then(() => navigate(`/${user}/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`))
+    }
+  }, [btn.id, btn.impression, btn.type, navigate, user, viewRate])
+
+
 
   const DeleteContent = (targetedContent) => {
     fetch(`http://localhost:7000/${btn.type === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}/${targetedContent}`,
@@ -349,7 +392,7 @@ function CardUI(btn) {
   }
 
   return (
-    <CardDisplay onMouseEnter={() => setViewRate(viewRate + 1)}>
+    <CardDisplay>
       <div style={{ position: "relative" }}>
         <div style={{ position: "relative" }}>
 
@@ -365,7 +408,7 @@ function CardUI(btn) {
               :
               <Inform>
                 {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
-                <More onClick={() => navigate(`/${user}/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More>
+                <More onClick={() => setViewRate(viewRate + 1)}>more</More>
               </Inform>
           }
         </div>
@@ -385,7 +428,7 @@ function Head() {
   const isInsideSearchBar = useRef();
   const [listVisiblity, setListVisiblity] = useState(false)
   const [allContent, setAllContent] = useState(null);
-// const [searchButtonVisibility, setSearchButtonVisibility] = useState(false)
+  // const [searchButtonVisibility, setSearchButtonVisibility] = useState(false)
   const [iconHoverBook, setIconHoverBook] = useState(false);
   const [iconHoverAudio, setIconHoverAudio] = useState(false);
   const [iconHoverVideo, setIconHoverVideo] = useState(false);
@@ -413,15 +456,15 @@ function Head() {
             },
           }).then((Response) => Response.json())
           .then((data) => [data2, data])
-    ).then((data3) => 
-    fetch(`http://localhost:7000/Video?q=${query}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-    }).then((Response) => Response.json())
-    .then((data) => setAllContent([...data3, data])))
+      ).then((data3) =>
+        fetch(`http://localhost:7000/Video?q=${query}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => setAllContent([...data3, data])))
 
   }, [query])
 
@@ -446,7 +489,7 @@ function Head() {
         setListVisiblity(false)
       }
 
-      
+
       if (e.target === SearchOpen.current) {
         setSearchBarVisiblity(true);
         console.log(e.target.childNode);
@@ -454,7 +497,7 @@ function Head() {
     }
 
     window.onresize = () => {
-      if(window.innerWidth <= 768){
+      if (window.innerWidth <= 768) {
         setSearchBarVisiblity(false)
         // setSearchButtonVisibility(true)
       } else {
@@ -469,12 +512,12 @@ function Head() {
       {user === "admin" ? (
         <>
           <Link to="/admin" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
-          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
               {query ?
-                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" alt={result.title} /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
@@ -483,11 +526,11 @@ function Head() {
           </SearchBar>
           <div>
             <div style={{ display: "flex", gap: "2em", alignItems: "center" }}>
-            <SearchButton>
-              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
-            </SearchButton>
-              <div style={{ position: "relative", width: "max-content" }}>
-                <Button ref={insideButton}>
+              <SearchButton>
+                <FontAwesomeIcon ref={SearchOpen} style={{ padding: '10px', fontSize: '18px' }} icon={faSearch} color='white' />
+              </SearchButton>
+              <AddContentButton>
+                <Button admin ref={insideButton}>
                   <FontAwesomeIcon icon={faPlusCircle} />
                   <P>أضف محتوى</P>
                 </Button>
@@ -496,7 +539,7 @@ function Head() {
                   <Link to="/admin/Audio" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverAudio(true)} onMouseLeave={() => setIconHoverAudio(false)}><FontAwesomeIcon icon={faHeadphones} color={iconHoverAudio ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>أديو</p></Li></Link>
                   <Link to="/admin/Video" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverVideo(true)} onMouseLeave={() => setIconHoverVideo(false)}><FontAwesomeIcon icon={faVideo} color={iconHoverVideo ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>فيدو</p></Li></Link>
                 </DropDownMenu>
-              </div>
+              </AddContentButton>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <p style={{ color: "white", fontWeight: "500" }}>Admin</p>
                 <Link to="/admin/dashbord">
@@ -511,12 +554,12 @@ function Head() {
       ) : user === "user" ? (
         <>
           <Link to="/user" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
-          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
               {query ?
-                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
@@ -524,8 +567,8 @@ function Head() {
 
           </SearchBar>
           <div style={{ display: 'flex', alignItems: 'center', gap: "25px" }}>
-              <SearchButton>
-              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
+            <SearchButton>
+              <FontAwesomeIcon ref={SearchOpen} style={{ padding: '10px', fontSize: '18px' }} icon={faSearch} color='white' />
             </SearchButton>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <p style={{ color: "white", fontWeight: "500" }}>المستعمل</p>
@@ -538,22 +581,22 @@ function Head() {
         </>
       ) : (
         <>
-              <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
-              <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none'}}>
+          <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+          <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
               {query ?
-                  allContent.map((content) => content.map((result) => <QueryResult onClick={() =>  navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag }</span></QueryResult>))
+                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{query}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
             </SerachResulte>
 
           </SearchBar>
-              <div style={{ display: 'flex', alignItems: 'center', gap: "25px" }}>
-              <SearchButton>
-              <FontAwesomeIcon ref={SearchOpen} style={{padding:'10px', fontSize: '18px'}} icon={faSearch} color='white' />
+          <div style={{ display: 'flex', alignItems: 'center', gap: "25px" }}>
+            <SearchButton>
+              <FontAwesomeIcon ref={SearchOpen} style={{ padding: '10px', fontSize: '18px' }} icon={faSearch} color='white' />
             </SearchButton>
             <Link style={{ textDecoration: "none" }} to='/login'>
               <Button>تسجيل الدخول</Button>
@@ -902,7 +945,7 @@ function UpdatePage({ contentType }) {
       })
       .then(Response => Response.json())
       .then(data => setGetData(data))
-  }, [])
+  }, [type])
 
   // const isInputEmpty = (newValue, oldValue) => {
   //   return newValue ? newValue : oldValue
@@ -1112,8 +1155,4 @@ function UpdatePage({ contentType }) {
   )
 }
 
-function AllContents({}) {
-  <CardUI />
-}
-
-export { CardUI, Head, Foot, AddPage, DetailPage, UpdatePage, AllContents };
+export { CardUI, Head, Foot, AddPage, DetailPage, UpdatePage };

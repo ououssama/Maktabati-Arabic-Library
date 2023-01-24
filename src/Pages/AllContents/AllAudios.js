@@ -43,7 +43,7 @@ export default function AllAudioContent() {
                 {
                     audio.length ?
                         <ContentContainer>
-                            {audio.map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />)}
+                            {audio.sort((a,b) => a.data - b.data).map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} impression={eachContent.impression} />)}
                         </ContentContainer>
                         :
                         <div className="Loader" style={{ height: "calc(100vh - 180px)" }}>

@@ -79,7 +79,7 @@ function ComposCart() {
               "Content-Type": "application/json"
             },
           }).then((Response) => Response.json())
-          .then((data) => [data2, data])
+          .then((data) => [...data2, ...data])
     ).then((data3) => 
     fetch(`http://localhost:7000/Video`,
     {
@@ -88,7 +88,7 @@ function ComposCart() {
         "Content-Type": "application/json"
       },
     }).then((Response) => Response.json())
-    .then((data) => setAllContent([...data3, data])))
+    .then((data) => setAllContent([...data3, ...data])))
 
   }, [])
 
@@ -105,7 +105,7 @@ function ComposCart() {
         <Comp>
           {
             allContent ?
-              allContent.map((Content) => Content.map((eachContent, i) => i >= Content.length - 3 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />))
+              allContent.sort(((a,b) => b.impression - a.impression)).map((Content, i) => i < 6 && <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>
                 <div className="dots">

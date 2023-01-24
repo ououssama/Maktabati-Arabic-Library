@@ -42,7 +42,7 @@ export default function AllBooksContent() {
             {
                 book.length ?
                     <ContentContainer>
-                        {book.map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />)}
+                        {book.sort((a,b) => a.data - b.data).map((eachContent, i) => <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} impression={eachContent.impression} />)}
                     </ContentContainer>
                     :
                     <div className="Loader" style={{ height: "calc(100vh - 180px)" }}>

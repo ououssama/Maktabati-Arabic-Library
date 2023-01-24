@@ -193,7 +193,7 @@ function ComposVid() {
         <Comp>
           {
             video.length ?
-              video.map((eachContent, i) => i >= (video.length) - 5 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} />)
+              video.sort((a,b) => b.impression - a.impression).map((eachContent, i) => i >= (video.length) - 5 && <CardUI key={i} imgSrc={eachContent.img} tag={eachContent.tag} title={eachContent.title} author={eachContent.author} id={eachContent.id} type={eachContent.tag} impression={eachContent.impression}/>)
               :
               <div className="Loader" style={{ width: "calc(15em * 6)" }}>
                 <div className="dots">
