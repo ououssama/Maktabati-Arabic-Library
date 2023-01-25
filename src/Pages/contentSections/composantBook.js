@@ -154,7 +154,8 @@ function ComposBook() {
   const [book, setBook] = useState([]);
   const { user } = useParams();
 
-  useEffect(() => {
+useEffect(() => {
+
     fetch(`http://localhost:7000/Books/`,
       {
         method: "GET",
@@ -164,7 +165,6 @@ function ComposBook() {
       }).then((Response) => Response.json())
       .then((data) => setBook(data))
       .catch((error) => console.error(error));
-
 
   }, [])
 

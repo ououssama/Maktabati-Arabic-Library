@@ -353,8 +353,6 @@ function CardUI(btn) {
   const [routeCheckout, setRouteCheckout] = useState();
   const [viewRate, setViewRate] = useState(0);
 
-
-
   useEffect(() => {
     // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname)
@@ -551,7 +549,7 @@ function Head() {
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {allContent.length?
+              {allContent.length ?
                 allContent.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>)
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
@@ -780,7 +778,7 @@ function DetailPage(btn) {
 
             <Description>
               <h2 style={{ margin: "15px 0 8px", fontSize: "24px", color: "#73a580" }}>نبذة عن الكتاب </h2>
-              <p style={{ margin: "0" }}>{btn.description} Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore assumenda minima facilis maxime quod, impedit unde alias quia, tempore temporibus aut dolor earum asperiores quibusdam sint soluta, ut officia consectetur!</p>
+              <p style={{ margin: "0" }}>{btn.description}</p>
             </Description>
 
             <Button second style={{ width: "max-content", marginTop: "2em" }}>
@@ -806,23 +804,39 @@ function DetailPage(btn) {
               justifyContent: 'center',
               width: "100%",
               height: "100%",
-              backgroundColor: 'red'
-            }}>
 
-              <TitreAudio>{btn.title}</TitreAudio>
+            }}>
               <div style={{
-                width: "100%",
-                height: "100%",
-                // backgroundColor: 'black'
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '1em',
               }}>
-                <CoverImgAudio meduim src={`/Database/images/${btn.img}`} />
+                <Titre>{btn.title}</Titre>
+                <Button second style={{ width: "max-content" }}>
+                  لتحميل
+                  <FontAwesomeIcon
+                    icon={faDownload}
+                    size='12px'
+                    color='#fff'
+                    style={{ marginRight: "10px" }}
+                  />
+                </Button>
               </div>
+
+
+              <audio style={{
+                width: '1000px'
+              }} controls onTimeUpdate={(e) => e.target.currentTime > 10 && e.target.pause()}>
+                <source width='100%' src={`/Database/Audios/${btn.audio}`} type="audio/mp3" />
+              </audio>
+
+
 
             </div>
 
           </Responsive>
         </>
-
 
         : btn.tag === 'فيديو' &&
         <>
