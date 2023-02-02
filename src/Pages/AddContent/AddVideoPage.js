@@ -5,7 +5,7 @@ export default function AddVideo() {
     return (
         <>
             <Head />
-                <AddPage contentType="فيدو"/>
+                <AddPage contentType="فيديو"/>
             <Foot />
         </>
     )

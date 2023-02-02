@@ -113,3 +113,44 @@
 .more-link:active{
   color: #3a8038;
 }
+
+/* Tooltip */
+
+.options-tool .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgba(255, 255, 255, 0.196);
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  bottom: 4em;
+  right: -50%;
+  z-index: 1;
+}
+
+.options-tool:hover .tooltiptext {
+  visibility: visible;
+}
+
+/* content options */
+.options-tool:nth-child(1){
+  position: relative;
+  left: 50%;
+  /* translate: 100% 0; */
+  transition: .3s 0.3s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
+.options-tool:nth-child(2){
+  position: relative;
+  right: 50%;
+  transition: .3s 0.3s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
+
+.options:hover .options-tool:nth-child(1){
+  left: 0;
+}
+
+.options:hover .options-tool:nth-child(2){
+  right: 0;
+}

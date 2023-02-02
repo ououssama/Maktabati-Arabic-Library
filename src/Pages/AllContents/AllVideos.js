@@ -5,19 +5,14 @@ import '../style.css'
 
 const ContentContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  justify-content: space-evenly;
+  grid-template-columns: repeat(2, auto); 
   grid-auto-columns: auto;
-  gap: 30px;
+  gap: 25px;
   box-sizing: border-box;
-   margin: 4em;
-  @media only screen and (min-width: 768px){
-      grid-template-columns: 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 992px){
-      grid-template-columns: 1fr 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 1200px){
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
+margin: 4em;
+  @media only screen and (max-width: 1200px){
+      grid-template-columns: auto; 
   }
 `
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBook, faHeadphones, faSearch, faPlusCircle, faUser, faVideo, faCamera, faCloudUpload, faFileAudio, faFilePdf, faFileVideo, faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faBook, faHeadphones, faSearch, faPlusCircle, faUser, faVideo, faCamera, faCloudUpload, faFileAudio, faFilePdf, faFileVideo, faDownload, faTrashCan, faPencil, faEye } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useRef, useState } from 'react'
 // import video from "../public/Database/video/bookvideo.mp4"
 
@@ -72,6 +72,7 @@ const Button = styled.button`
     ${props => props.admin && css`
     @media only screen and (max-width: 600px){
       padding: 14px;
+      font-size: 25px;
       border-radius: 100%;
     }
     `};
@@ -85,6 +86,7 @@ const SearchBar = styled.div`
     max-width: 700px; 
     position: relative;
     display: block;
+    z-index: 20;
     @media only screen and (max-width: 768px){
       display:'none';
       position: absolute;
@@ -159,7 +161,7 @@ const SearchButton = styled.div`
   border-radius: 10px;  
   cursor: pointer;
   display: none;
-@media only screen and (max-width: 768px){
+  @media only screen and (max-width: 768px){
     display: inherit;
   }
 `
@@ -177,24 +179,40 @@ const AddContentButton = styled.div`
 
 // Style for header components
 const Footer = styled.footer`
-//  position: absolute;
  bottom: auto;
  width: 100%;
  display: flex;
  flex-wrap: wrap;
- justify-content: space-between;
+ justify-content: space-around;
  box-sizing: border-box;
- padding: 0 40px;
+ padding: 30px 50px;
  align-items: center;
  background-color: #1b261e;
+ @media only screen and (max-width: 600px){
+  flex-direction: column;
+ }
+`
+
+const Nav = styled.span`
+  margin:5px;
+  padding: 5px 14px;
+ color: white; 
+ font-size: 15px; 
+ display: inline-block;
+ &:hover{
+  background-color: #418E3E;
+  border-radius:10px
+ }
 `
 
 const PC = styled.p`
  color:white;
+ text-align:center;
 `
 
 const Logo = styled.p`
  font-weight: 500;
+ margin: 0;
  color:white;
  font-size:28px;
 `
@@ -226,7 +244,7 @@ const DropDownMenu = styled.ul`
  }
 `
 
-const P = styled.p`
+const AddText = styled.p`
  margin: 0;
  display: block;
  @media only screen and (max-width: 600px){
@@ -254,10 +272,11 @@ const Submit = styled.input`
          background-color: #418E3E;
     };`
 
-const Inform = styled.div`
+const Options = styled.div`
     position: absolute;
     left: 0;
     top: 0;
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.9);
     z-index: 1;
     width: 100%;
@@ -265,16 +284,20 @@ const Inform = styled.div`
     border-radius: 10px;
     opacity: 0;
     transition: all 0.3s ease;
-    display: grid;
+    display: flex;
+    gap: 1em;
     justify-content: center;
     align-items: center;
     &:hover {
       opacity: 1;
     };
   `;
-const More = styled.button`
-  width: 120px;
-  height: 40px;
+const OptionsTool = styled.button`
+  position:relative;
+  width: 60px;
+  width: max-content;
+  height: 60px;
+  padding: 0 15px;
   border: none;
   border-radius: 10px;
   background-color: #c5c39294;
@@ -282,15 +305,39 @@ const More = styled.button`
   font-size: 17px;
   cursor: pointer;
   font-family: "Cairo", sans-serif;
+  ${(props) => props.delete && css`
+  background-color: #f41f;
+  width: 60px;
   &:hover {
-    background-color: #1b261e;
+    background-color: #db3d12;
   };
+    `};
+  ${(props) => props.update && css`
+  background-color: #1185ff;
+  width: 60px;
+  &:hover {
+    background-color: #1273db;
+  };
+    `};
 `;
 
 
 const CoverImg = styled.img`
-  height: 20em;
+  height: 100%;
   width: 15em;
+  border: solid .5px #9998;
+  border-radius: 10px;
+  overflow: hidden;
+  ${(props) => props.meduim && css`
+  height: 22em;
+  width: 17em;
+  `};
+`
+const CoverVideo = styled.img`
+  height: 100%;
+  width: max-content;
+  min-width: 50px;
+  object-fit: cover;
   border: solid .5px #9998;
   border-radius: 10px;
   overflow: hidden;
@@ -328,12 +375,13 @@ const CoverImgAudio = styled.img`
 
 const Responsive = styled.div`
   width: 100%;
+  max-width: 70em;
   height: 100%;
-  padding: 5em;
+  padding: 5em 4em;
   box-sizing: border-box;
   display: flex;
-  // flex-direction: column;
   gap: 3em;
+  margin: 0;
   align-items: start;
   justify-content:start;
 
@@ -352,7 +400,7 @@ function CardUI(btn) {
   let route = useLocation();
   const [routeCheckout, setRouteCheckout] = useState();
   const [viewRate, setViewRate] = useState(0);
-
+  let isDeleted = sessionStorage;
   useEffect(() => {
     // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname)
@@ -377,8 +425,8 @@ function CardUI(btn) {
 
 
 
-  const DeleteContent = (targetedContent) => {
-    fetch(`http://localhost:7000/${btn.type === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}/${targetedContent}`,
+  const DeleteContent = (targetedIDContent, targetedTypeContent) => {
+    fetch(`http://localhost:7000/${targetedTypeContent === "كتاب" ? "Books" : targetedTypeContent === "أديو" ? "Audio" : targetedTypeContent === "فيديو" && "Video"}/${targetedIDContent}`,
       {
         method: "DELETE",
         headers: {
@@ -387,27 +435,42 @@ function CardUI(btn) {
       }
     )
       .then((Response) => console.log(Response.json()))
+    
+    isDeleted.setItem('isDeleted', true)
   }
 
   return (
     <CardDisplay>
       <div style={{ position: "relative" }}>
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", height: '20em', marginBottom: '7px' }}>
+          {btn.type === 'فيديو' ?
+            <CoverVideo src={`/Database/images/${btn.imgSrc}`} alt={btn.title} />
+            :
+            <CoverImg src={`/Database/images/${btn.imgSrc}`} alt={btn.title} />
 
-          <CoverImg src={`/Database/images/${btn.imgSrc}`} alt={btn.title} />
+          }
           <span style={{ position: "absolute", right: "0", top: "0", padding: "7px 15px", fontSize: "12px", fontWeight: "600", color: btn.tag === "كتاب" ? "#fff" : "#2d2d2", margin: "5px", borderRadius: "10px", backgroundColor: btn.tag === "كتاب" ? "#FF3636" : btn.tag === "فيديو" ? "#FFC736" : "#8EFF36" }}>{btn.tag}</span>
           {
             routeCheckout && routeCheckout.match(/dashbord/) ?
-              <Inform>
+              <Options className='options'>
                 {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
-                <More onClick={() => DeleteContent(btn.id)}>Delete</More>
-                <More onClick={() => navigate(`/${user}/dashbord/update/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>Update</More>
-              </Inform>
+                <OptionsTool className='options-tool' delete onClick={() => DeleteContent(btn.id, btn.type)}>
+                  <div className='tooltiptext'>Delete</div>
+                  <FontAwesomeIcon icon={faTrashCan} size={'xl'}></FontAwesomeIcon>
+                </OptionsTool>
+                <OptionsTool className='options-tool' update onClick={() => navigate(`/${user}/dashbord/update/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>
+                  <div className='tooltiptext'>Update</div>
+                  <FontAwesomeIcon icon={faPencil} size={'xl'}></FontAwesomeIcon>
+                </OptionsTool>
+              </Options>
               :
-              <Inform>
+              <Options>
                 {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
-                <More onClick={() => setViewRate(viewRate + 1)}>more</More>
-              </Inform>
+                <OptionsTool onClick={() => setViewRate(viewRate + 1)}>
+                  <FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
+                  <p style={{ display: 'inline', marginRight: '15px' }}>المزيد</p>
+                </OptionsTool>
+              </Options>
           }
         </div>
 
@@ -466,15 +529,24 @@ function Head() {
 
   }, [searchQuery])
 
+  // check if the width of the window in the first load to make the search bar responsive
+  window.onload = () => {
+    if (window.innerWidth <= 775) {
+      setSearchBarVisiblity(false)
+    } else {
+      setSearchBarVisiblity(true)
+    }
+  }
+
   useEffect(() => {
     window.onclick = (e) => {
-      if (e.target.parentNode === insideButton.current || e.target === insideButton.current) {
+      if (e.target.parentElement === insideButton.current || e.target === insideButton.current) {
         setMenuToggel(true);
       } else {
         setMenuToggel(false);
       }
-      if (window.innerWidth <= 768) {
-        if (e.target === SearchOpen.current) {
+      if (window.innerWidth <= 775) {
+        if (e.target.parentElement === insideButton.current || e.target === SearchOpen.current) {
           setSearchBarVisiblity(true);
         }
       }
@@ -486,31 +558,32 @@ function Head() {
       setListVisiblity(false)
     }
 
+    // check if the width of the window when it is resized to make the search bar responsive
     window.onresize = () => {
       if (window.innerWidth <= 768) {
         setSearchBarVisiblity(false)
-        // setSearchButtonVisibility(true)
       } else {
         setSearchBarVisiblity(true)
-        // setSearchButtonVisibility(false)
       }
     }
-
   })
+
+
 
   return (
     <Header>
+      {/* check the state of the user anď match it with the right page layout */}
       {user === "admin" ? (
         <>
-          <Link to="/admin" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+          <Link to="/admin" style={{ textDecoration: "none", display: 'flex', alignItems: 'center', gap: '15px' }}><img src='/logo.png' width='50px' height='40px' alt='logo' /><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {searchQuery ?
-                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} width="35px" alt={result.title} /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
+              {allContent.length ?
+                allContent.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>)
                 :
-                <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
+                <p style={{ opacity: ".5" }}>محتوى غير متوفر</p>
               }
             </SerachResulte>
 
@@ -522,17 +595,17 @@ function Head() {
               </SearchButton>
               <AddContentButton>
                 <Button admin ref={insideButton}>
-                  <FontAwesomeIcon icon={faPlusCircle} />
-                  <P>أضف محتوى</P>
+                  <FontAwesomeIcon icon={faPlusCircle}></FontAwesomeIcon>
+                  <AddText>أضف محتوى</AddText>
                 </Button>
                 <DropDownMenu style={{ display: menuToggel ? "block" : "none" }}>
                   <Link to="/admin/book" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverBook(true)} onMouseLeave={() => setIconHoverBook(false)}><FontAwesomeIcon icon={faBook} color={iconHoverBook ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>كتاب</p></Li></Link>
                   <Link to="/admin/Audio" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverAudio(true)} onMouseLeave={() => setIconHoverAudio(false)}><FontAwesomeIcon icon={faHeadphones} color={iconHoverAudio ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>أديو</p></Li></Link>
-                  <Link to="/admin/Video" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverVideo(true)} onMouseLeave={() => setIconHoverVideo(false)}><FontAwesomeIcon icon={faVideo} color={iconHoverVideo ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>فيدو</p></Li></Link>
+                  <Link to="/admin/Video" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverVideo(true)} onMouseLeave={() => setIconHoverVideo(false)}><FontAwesomeIcon icon={faVideo} color={iconHoverVideo ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>فيديو</p></Li></Link>
                 </DropDownMenu>
               </AddContentButton>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <p style={{ color: "white", fontWeight: "500" }}>Admin</p>
+                <p style={{ color: "white", fontWeight: "500" }}>المسؤول</p>
                 <Link to="/admin/dashbord">
                   <div style={{ backgroundColor: "white", width: "35px", height: "35px", borderRadius: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <FontAwesomeIcon icon={faUser} color="#4EAA4B" />
@@ -544,7 +617,7 @@ function Head() {
         </>
       ) : user === "user" ? (
         <>
-          <Link to="/user" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+          <Link to="/user" style={{ textDecoration: "none", display: 'flex', alignItems: 'center', gap: '15px' }}><img src='/logo.png' width='50px' height='40px' alt='logo' /><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
@@ -572,13 +645,13 @@ function Head() {
         </>
       ) : (
         <>
-          <Link to="/guest" style={{ textDecoration: "none" }}><Logo>مكتبتي</Logo></Link>
+          <Link to="/guest" style={{ textDecoration: "none", display: 'flex', alignItems: 'center', gap: '15px' }}><img src='/logo.png' width='50px' height='40px' alt='logo' /><Logo>مكتبتي</Logo></Link>
           <SearchBar style={{ display: searchBarVisiblity ? 'block' : 'none' }}>
             <InputSearch ref={isInsideSearchBar} onChange={(e) => setSearchQuery(e.target.value)} type='search' placeholder='البحت' />
             <FontAwesomeIcon style={{ position: "absolute", right: "20px", fontSize: '20px', top: "50%", translate: '0 -50%', }} icon={faSearch} color='white' />
             <SerachResulte style={{ display: listVisiblity ? 'block' : 'none' }}>
-              {searchQuery ?
-                allContent.map((content) => content.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>))
+              {allContent.length ?
+                allContent.map((result) => <QueryResult onClick={() => navigate(`/${user}/view/${result.tag === 'كتاب' ? 'Books' : result.tag === 'فيديو' ? 'Video' : 'Audio'}/${result.id}`)}><img src={`/Database/images/${result.img}`} alt={result.title} width="35px" /><div style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}><span>{searchQuery}</span><span style={{ position: 'absolute', right: 0, color: "black", opacity: "0.3", zIndex: "-1", boxSizing: "border-box" }}>{result.title}</span></div><span>{result.tag}</span></QueryResult>)
                 :
                 <span style={{ opacity: ".5" }}>محتوى غير متوفر</span>
               }
@@ -601,19 +674,20 @@ function Head() {
 
 function Foot() {
 
+  let { user } = useParams();
   return (
     <Footer>
 
       <div>
         <Logo>مكتبتي</Logo>
       </div>
-      <div >
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>الكتب</span>
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>الفديوهات</span>
-        <span style={{ margin: '20px', color: 'white', fontSize: '15px', display: "inline" }}>أوديو</span>
+      <div>
+        <Link to={`/${user}/Books`}><Nav>الكتب</Nav></Link>
+        <Link to={`/${user}/Videos`}><Nav>الفديوهات</Nav></Link>
+        <Link to={`/${user}/Audios`}><Nav>أوديو</Nav></Link>
       </div>
       <div>
-        <PC>@copyright 2022-2023</PC>
+        <PC>© جميع الحقوق محفوظة لموقع مكتبتي</PC>
       </div>
     </Footer>
   )
@@ -626,50 +700,52 @@ function AddPage({ contentType }) {
   const [photo, setPhoto] = useState(null);
 
   const [allContent, setAllContent] = useState([]);
-  const [books, setBooks] = useState([]);
-  const [audios, setaudios] = useState([]);
-  const [videos, setvideos] = useState([]);
+  const redirect = useNavigate();
+  let { user } = useParams();
+
+  let NewAddedContent = sessionStorage;
 
   useEffect(() => {
-    fetch(`http://localhost:7000/Books/`,
+    fetch(`http://localhost:7000/Books`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json"
         },
       }).then((Response) => Response.json())
-      .then((data) => setBooks(data))
-
-    fetch(`http://localhost:7000/Audio/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then((Response) => Response.json())
-      .then((data) => setaudios(data))
-    fetch(`http://localhost:7000/Video/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then((Response) => Response.json())
-      .then((data) => setvideos(data))
+      .then((data) => data)
+      .then((data2) =>
+        fetch(`http://localhost:7000/Audio`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => [...data2, ...data])
+      ).then((data3) =>
+        fetch(`http://localhost:7000/Video`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => setAllContent([...data3, ...data])))
 
   }, [])
 
 
-  useEffect(() => {
-    setAllContent([books, audios, videos])
-  }, [books, audios, videos])
 
   let HandelForm = (e) => {
     e.preventDefault();
-    // const formData = new FormData(e.target);
+    // check for the latest id added
+    let latestID = 0;
+    allContent && allContent.filter((content) => content.id >= latestID ? latestID = content.id : latestID);
+
     const data = {
-      id: allContent.map((content) => content.id + 1),
-      image: photo,
+      id: latestID + 1,
+      img: photo,
       tag: contentType,
       title: e.target.title.value,
       author: e.target.author.value,
@@ -677,7 +753,7 @@ function AddPage({ contentType }) {
       file: fileName,
       date: new Date().toLocaleDateString()
     }
-    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : "أديو" ? "Audio" : "فيدو" && "Video"}`,
+    fetch(`http://localhost:7000/${contentType === "كتاب" ? "Books" : contentType === "أديو" ? "Audio" : "Video"}`,
       {
         method: "POST",
         headers: {
@@ -687,19 +763,23 @@ function AddPage({ contentType }) {
       }).then((Response) => console.log(Response))
       .then((data) => console.log(data))
       .catch((error) => console.error(error))
+    
+    // if the content has been added the admin is been redirects to the dashboard and get notified with a message
+    redirect(`/${user}/dashbord`)
+    NewAddedContent.setItem('isAdded', true);
   }
 
   return (
     <>
       <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
         <h1 style={{ fontSize: "42px" }}>{contentType}</h1>
-        <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
-          <div style={{ flex: 1, cursor: "pointer" }}>
+        <div style={{ display: "flex", gap: "30px", flexWrap: "wrap", flexDirection: 'column' }}>
+          <div style={{ flex: 1, cursor: "pointer", width: '100%' }}>
             <label htmlFor="uploadImage">
-              <div style={{ backgroundColor: "#9992", maxWidth: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer" }}>
+              <div style={{ backgroundColor: "#9992", width: "16em", height: "22em", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative", cursor: "pointer", objectFit: 'cover', alignSelf: 'center' }}>
                 {photo ?
                   <>
-                    <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${photo}`} alt={contentType} />
+                    <img style={{ width: "100%" }} src={`/Database/images/${photo}`} alt={contentType} />
                   </>
                   :
                   <>
@@ -736,7 +816,7 @@ function AddPage({ contentType }) {
                     :
                     <>
                       <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                      <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
+                      <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر الملف</p>
                     </>
                   }
                   <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => setFileName(e.target.files[0].name)} />
@@ -757,9 +837,7 @@ function DetailPage(btn) {
       <>
 
         <Responsive>
-          <div>
-            {/* <PIC>
-                  </PIC> */}
+          <div style={{ margin: "0 auto" }}>
             <CoverImg meduim src={`/Database/images/${btn.img}`} />
           </div>
 
@@ -782,7 +860,7 @@ function DetailPage(btn) {
             </Description>
 
             <Button second style={{ width: "max-content", marginTop: "2em" }}>
-              لتحميل
+              <a style={{ textDecoration: "none", color: 'white' }} href={`/Database/documents/${btn.pdf}`} download>لتحميل</a>
               <FontAwesomeIcon
                 icon={faDownload}
                 size='12px'
@@ -794,7 +872,7 @@ function DetailPage(btn) {
         </Responsive>
       </>
 
-      : btn.tag === 'اديو' ?
+      : btn.tag === 'أديو' ?
         <>
 
           <Responsive>
@@ -811,10 +889,11 @@ function DetailPage(btn) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 marginBottom: '1em',
+                width: 'auto'
               }}>
                 <Titre>{btn.title}</Titre>
                 <Button second style={{ width: "max-content" }}>
-                  لتحميل
+                  <a style={{ textDecoration: "none", color: 'white' }} href={`/Database/Audios/${btn.audio}`} download>لتحميل</a>
                   <FontAwesomeIcon
                     icon={faDownload}
                     size='12px'
@@ -825,11 +904,14 @@ function DetailPage(btn) {
               </div>
 
 
-              <audio style={{
-                width: '1000px'
-              }} controls onTimeUpdate={(e) => e.target.currentTime > 10 && e.target.pause()}>
-                <source width='100%' src={`/Database/Audios/${btn.audio}`} type="audio/mp3" />
-              </audio>
+              <div>
+                <img width='100%' src={`/Database/images/${btn.img}`} />
+                <audio style={{
+                  width: '100%'
+                }} controls onTimeUpdate={(e) => e.target.currentTime > 10 && e.target.pause()}>
+                  <source width='100%' src={`/Database/Audios/${btn.audio}`} type="audio/mp3" />
+                </audio>
+              </div>
 
 
 
@@ -858,7 +940,7 @@ function DetailPage(btn) {
               }}>
                 <Titre>{btn.title}</Titre>
                 <Button second style={{ width: "max-content" }}>
-                  لتحميل
+                  <a style={{ textDecoration: "none", color: 'white' }} href={`/Database/videos/${btn.video}`} download>لتحميل</a>
                   <FontAwesomeIcon
                     icon={faDownload}
                     size='12px'
@@ -893,36 +975,14 @@ function UpdatePage({ contentType }) {
   const [getData, setGetData] = useState(null);
   let { id, type } = useParams();
 
-  // let HandelForm = (e) => {
-  //   e.preventDefault();
-  //   // const formData = new FormData(e.target);
-  //   const data = {
-  //     title: e.target.title.value,
-  //     author: e.target.author.value,
-  //     // description: e.target.description.value,
-  //     // image: photo,
-  //     // file: fileName,
-  //     // date: new Date()
-  //   }
-  //   fetch(`http://localhost:7000/Contents/`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify(data)
-  //     }).then((Response) => Response.json())
-  //     .then((data) => console.log(data.Books))
-  //     .catch((error) => console.error(error))
-  // }
 
   let HandelForm = (e) => {
     e.preventDefault();
-    // const formData = new FormData(e.target);
+
     const data = {
       id: currentId,
       img: newPhoto.value,
-      tag: contentType,
+      tag: contentType === "Books" ? "كتاب" : contentType === "Audio" ? "أديو" : contentType === "Video" && "فيديو",
       title: newTitle.empty ? e.target.title.value : newTitle.value,
       author: newAuthor.empty ? e.target.author.value : newAuthor.value,
       description: newDesc.empty ? e.target.description.value : newDesc.value,
@@ -954,9 +1014,6 @@ function UpdatePage({ contentType }) {
       .then(data => setGetData(data))
   }, [type])
 
-  // const isInputEmpty = (newValue, oldValue) => {
-  //   return newValue ? newValue : oldValue
-  // }
 
   return (
     type === "Books" ?
@@ -1017,7 +1074,7 @@ function UpdatePage({ contentType }) {
                     </div>
                   </label>
                 </div>
-                <Submit type="submit" value="أضف المحتوى" />
+                <Submit type="submit" value="تعديل المحتوى" />
               </form>
             </div>
           </div>
@@ -1030,7 +1087,7 @@ function UpdatePage({ contentType }) {
       (type === "Audio") ?
         <>
           <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
-            <h1 style={{ fontSize: "42px" }}>اديو</h1>
+            <h1 style={{ fontSize: "42px" }}>أديو</h1>
             {getData && getData.map((content) => content.id === parseInt(id) && <div key={content.id}>
               <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, cursor: "pointer" }}>
@@ -1085,7 +1142,7 @@ function UpdatePage({ contentType }) {
                       </div>
                     </label>
                   </div>
-                  <Submit type="submit" value="أضف المحتوى" />
+                  <Submit type="submit" value="تعديل المحتوى" />
                 </form>
               </div>
             </div>
@@ -1152,7 +1209,7 @@ function UpdatePage({ contentType }) {
                       </div>
                     </label>
                   </div>
-                  <Submit type="submit" value="أضف المحتوى" />
+                  <Submit type="submit" value="تعديل المحتوى" />
                 </form>
               </div>
             </div>

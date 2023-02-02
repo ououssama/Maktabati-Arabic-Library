@@ -5,8 +5,6 @@ import { CardUI } from "../ElementsUI";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import '../style.css';
-// import { Fade } from 'react-slideshow-image';
-// import 'react-slideshow-image/dist/styles.css'
 
 const Container = styled.div`
   display: flex;

@@ -105,8 +105,8 @@ const SubmitBtn = styled.input`
 `;
 
 function Login() {
-  const regularUser = { username: "oussama", pass: "12345" };
-  const adminUser = { username: "hiba", pass: "54321" };
+  const regularUser = { username: "user", pass: "12345" };
+  const adminUser = { username: "admin", pass: "54321" };
   const [userName, setUserName] = useState("");
   const [pass, setPass] = useState("");
   const [userAuth, setUserAuth] = useState(true);
@@ -132,13 +132,15 @@ const  handlerTest=()=>{
     } else {
       setPassAuth(false)
     }
-  } else {
-    setUserAuth(false);
-    if ( pass === regularUser.pass) {
+  } else if (userName === adminUser.username) {
+    setUserAuth(true);
+    if ( pass === adminUser.pass) {
       setPassAuth(true);
     } else {
       setPassAuth(false)
     }
+  } else {
+    setUserAuth(false);
   }
 
 }

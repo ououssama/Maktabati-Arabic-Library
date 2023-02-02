@@ -11,14 +11,11 @@ import { FrontOffice } from './Pages/FrontOffice';
 import Login from './Pages/login';
 import ViewContent from './Pages/contentSections/ViewContent';
 // import UpdateBook from './Pages/UpdateContent/UpdateBookContent';
-import { UpdatePage } from './Pages/ElementsUI';
-import UpdateBook from './Pages/UpdateContent/UpdateAudioContent';
-import UpdateAudio from './Pages/UpdateContent/UpdateAudioContent';
-import UpdateVideo from './Pages/UpdateContent/UpdateVideoContent';
 import AllBooksContent from './Pages/AllContents/AllBooks';
 import AllAudioContent from './Pages/AllContents/AllAudios';
 import AllVideoContent from './Pages/AllContents/AllVideos';
 import AllContents from './Pages/AllContents/AllContents';
+import Update from './Pages/UpdateContent/UpdateContent';
 
 
 
@@ -50,9 +47,7 @@ root.render(
         <Route path="/:user/Video" element={<AddVideo />} />
         <Route path="/login" element={<Login />} />
         <Route path='/:user/View/:type/:id' element={<ViewContent />} />
-        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateBook />} />
-        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateAudio />} />
-        <Route path='/:user/dashbord/Update/:type/:id' element={<UpdateVideo />} />
+        <Route path='/:user/dashbord/Update/:type/:id' element={<Update />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode >

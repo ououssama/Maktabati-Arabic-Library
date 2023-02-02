@@ -51,10 +51,10 @@ export default function ViewContent() {
     <>
       <div style={{ display: "grid", gridTemplateRows: "auto 1fr auto", height: "100vh" }}>
         <Head />
-        <div>
+        <div style={{display:'flex', justifyContent:'center'}}>
           {
             allContent?
-              allContent.map((eachContent) => eachContent.map((Content, i) => (Content.id === parseInt(id) && Content.tag === (type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'اديو')) && <DetailPage key={i} img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.file} audio={Content.file} pdf={Content.file} tag={Content.tag} description={ Content.description } />))
+              allContent.map((eachContent) => eachContent.map((Content, i) => (Content.id === parseInt(id) && Content.tag === (type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'أديو')) && <DetailPage key={i} img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.file} audio={Content.file} pdf={Content.file} tag={Content.tag} description={ Content.description } />))
               :
               <div className="Loader" style={{ height: "calc(100vh - (40px * 2) * 2)" }}>
                 <div className="dots">
@@ -62,7 +62,6 @@ export default function ViewContent() {
                   <span></span>
                   <span></span>
                   <span></span>
-                  {/* <img src="/book.gif" /> */}
                 </div>
                 <p>جاري التحميل</p>
               </div>

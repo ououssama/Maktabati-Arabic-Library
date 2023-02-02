@@ -3,21 +3,12 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const ContentContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  grid-auto-columns: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 30px;
   box-sizing: border-box;
   margin: 4em;
-  @media only screen and (min-width: 768px){
-      grid-template-columns: 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 992px){
-      grid-template-columns: 1fr 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 1200px){
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-  }
 `
 
 export default function AllContents() {

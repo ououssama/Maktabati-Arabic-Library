@@ -3,25 +3,16 @@ import { useState } from 'react';
 import { CardUI, Head, Foot } from './ElementsUI';
 import './style.css';
 import styled from 'styled-components';
-// import { type } from '@testing-library/user-event/dist/type';
-// import { isDisabled } from '@testing-library/user-event/dist/utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 
 // styled Component
 const ContentContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  grid-auto-columns: auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 30px;
   box-sizing: border-box;
-  @media only screen and (min-width: 768px){
-      grid-template-columns: 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 992px){
-      grid-template-columns: 1fr 1fr 1fr 1fr; 
-  }
-  @media only screen and (min-width: 1200px){
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr; 
-  }
+  justify-content: center;
 `
 const LastAdded = styled.div`
   display: flex;
@@ -67,7 +58,9 @@ export default function BackOfficeUI() {
   const [page, setPage] = useState(1)
   const [allContent, setAllContent] = useState([]);
   const [latestContent, setLatestContent] = useState([]);
-
+  const [successAddedMsg, setSuccessAddedMsg] = useState();
+  const [successDeletedMsg, setSuccessDeletedMsg] = useState();
+  let ContentStatus = sessionStorage;
 
   useEffect(() => {
     fetch(`http://localhost:7000/Books?_page=${page}&_limit=3`,
@@ -87,15 +80,15 @@ export default function BackOfficeUI() {
             },
           }).then((Response) => Response.json())
           .then((data) => [...data2, ...data])
-    ).then((data3) => 
-    fetch(`http://localhost:7000/Video?_page=${page}&_limit=3`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-    }).then((Response) => Response.json())
-    .then((data) => setAllContent([...data3, ...data])))
+      ).then((data3) =>
+        fetch(`http://localhost:7000/Video?_page=${page}&_limit=3`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => setAllContent([...data3, ...data])))
 
   }, [page])
 
@@ -117,25 +110,48 @@ export default function BackOfficeUI() {
             },
           }).then((Response) => Response.json())
           .then((data) => [...data2, ...data])
-    ).then((data3) => 
-    fetch(`http://localhost:7000/Video`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-    }).then((Response) => Response.json())
-    .then((data) => setLatestContent([...data3, ...data])))
+      ).then((data3) =>
+        fetch(`http://localhost:7000/Video`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            },
+          }).then((Response) => Response.json())
+          .then((data) => setLatestContent([...data3, ...data])))
+
+    setSuccessAddedMsg(ContentStatus.getItem('isAdded'))
+    setSuccessDeletedMsg(ContentStatus.getItem('isDeleted'))
 
   }, [])
+
+  let popUpMessage = () => {
+
+    setTimeout(() => {
+      setSuccessAddedMsg(false)
+      setSuccessDeletedMsg(false)
+      ContentStatus.clear()
+    }, 3000);
+
+    return (
+      <>
+        <span style={{ display: successAddedMsg ? 'block' : 'none', position: 'fixed', right: '50%', translate: '50% 1em', backgroundColor: 'green', color: 'white', borderRadius: '5px', padding: '12px', zIndex: 100 }}><FontAwesomeIcon icon={faCheckCircle} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline' }}>تم إضافة المحتوى بنجاح</p></span>
+        <span style={{ display: successDeletedMsg ? 'block' : 'none', position: 'fixed', right: '50%', translate: '50% 1em', backgroundColor: 'green', color: 'white', borderRadius: '5px', padding: '12px', zIndex: 100 }}><FontAwesomeIcon icon={faCheckCircle} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline' }}>تم إزالة المحتوى بنجاح</p></span>
+      </>
+    )
+
+  }
 
   return (
     <>
       <Head />
+      {popUpMessage()}
       <div style={{ margin: "4em 4em" }}>
         <h1>أحدث الإضافات</h1>
         <LastAdded>
-          {latestContent && latestContent.sort(((a,b) => b.date - a.date)).map((Content, i) => i < 6 && <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)}
+          {
+            latestContent && latestContent.sort(((a, b) => new Date(b.date) - new Date(a.date))).map((Content, i) => i < 6 && <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)
+          }
         </LastAdded>
       </div>
       <div style={{ margin: "4em 4em" }}>
@@ -143,12 +159,12 @@ export default function BackOfficeUI() {
         <ContentContainer>
           {
             allContent && (
-              allContent && allContent.sort(((a,b) => b.date - a.date)).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)
+              allContent && allContent.sort(((a, b) => new Date(b.date) - new Date(a.date))).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)
             )}
         </ContentContainer>
         <div style={{ display: "flex", gap: "5px", height: "min-content", justifyContent: "center", marginTop: "3em" }}>
           <Pagination onClick={() => setPage(page - 1)} disabled={page < 2 ? true : false}>السابق</Pagination>
-          <Pagination onClick={() => setPage( page + 1)} disabled={allContent.length? false : true}>التالي</Pagination>
+          <Pagination onClick={() => setPage(page + 1)} disabled={allContent.length ? false : true}>التالي</Pagination>
         </div>
       </div>
       <Foot />
