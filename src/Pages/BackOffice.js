@@ -12,7 +12,6 @@ const ContentContainer = styled.div`
   flex-wrap: wrap;
   gap: 30px;
   box-sizing: border-box;
-  justify-content: center;
 `
 const LastAdded = styled.div`
   display: flex;
@@ -120,6 +119,7 @@ export default function BackOfficeUI() {
           }).then((Response) => Response.json())
           .then((data) => setLatestContent([...data3, ...data])))
 
+    // set a message for the admin if some content is added or deleted
     setSuccessAddedMsg(ContentStatus.getItem('isAdded'))
     setSuccessDeletedMsg(ContentStatus.getItem('isDeleted'))
 
@@ -150,6 +150,7 @@ export default function BackOfficeUI() {
         <h1>أحدث الإضافات</h1>
         <LastAdded>
           {
+            // sort by the newest added content
             latestContent && latestContent.sort(((a, b) => new Date(b.date) - new Date(a.date))).map((Content, i) => i < 6 && <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)
           }
         </LastAdded>
@@ -158,13 +159,13 @@ export default function BackOfficeUI() {
         <h1>محتوى المضاف</h1>
         <ContentContainer>
           {
-            allContent && (
-              allContent && allContent.sort(((a, b) => new Date(b.date) - new Date(a.date))).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)
-            )}
+            // sort by the newest added content
+            allContent && allContent.sort(((a, b) => new Date(b.date) - new Date(a.date))).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)
+          }
         </ContentContainer>
         <div style={{ display: "flex", gap: "5px", height: "min-content", justifyContent: "center", marginTop: "3em" }}>
           <Pagination onClick={() => setPage(page - 1)} disabled={page < 2 ? true : false}>السابق</Pagination>
-          <Pagination onClick={() => setPage(page + 1)} disabled={allContent.length ? false : true}>التالي</Pagination>
+          <Pagination onClick={() => setPage(page + 1)} disabled={allContent.length > 1 ? false : true}>التالي</Pagination>
         </div>
       </div>
       <Foot />

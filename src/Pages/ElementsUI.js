@@ -14,40 +14,6 @@ let audioRegx = RegExp(/\.mp3 || \.wav/);
 let videoRegx = RegExp(/\.mp4 || \.mov/);
 
 // Styled components
-// Style for cardUI components
-const CardDisplay = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: max-content;
-  direction: rtl;
-  display: inline-block;
-`
-const ContentText = styled.p`
-margin: 0;
-font-size: 20px;
-line-height: 1.3;
-
-${props => props.secondText && css`
-  font-size: 16px;
-  color: #999;
-`}
-`
-
-// Style for header components
-const Header = styled.header`
-    display: flex;
-    justify-content: space-between;
-    padding: 0 40px;
-    width: 100%;
-    box-sizing: border-box;
-    align-items: center;
-    height: 70px;
-    background-color: #8acb88;
-    gap: 4em;
-    position: relative;
-    `
-
-
 const Button = styled.button`
     display: flex;
     align-items: center;
@@ -81,6 +47,66 @@ const Button = styled.button`
       font-size: 18px;
     `};
     `
+
+// Style for cardUI components
+const CardDisplay = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  direction: rtl;
+  display: inline-block;
+`
+const ContentText = styled.p`
+margin: 0;
+font-size: 20px;
+line-height: 1.3;
+
+${props => props.secondText && css`
+  font-size: 16px;
+  color: #999;
+`}
+`
+
+// Style for header components
+const Header = styled.header`
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+    height: 70px;
+    background-color: #8acb88;
+    gap: 4em;
+    position: relative;
+    `
+const DropDownMenu = styled.ul`
+    position: absolute;
+    list-style: none;
+    background-color: white;
+    border: solid 1.5px #499C44;
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    left: 0;
+    top: 2em;
+    border-radius: 5px;
+    z-index: 10;
+    @media only screen and (max-width: 600px){
+     translate: calc(-100% + 40px) calc(-100% - 55px);
+     width: max-content;
+    }
+   `
+
+const AddButton = styled.p`
+    margin: 0;
+    display: block;
+    @media only screen and (max-width: 600px){
+     display: none;
+    }
+   `
+
+//  style for searchbar
 const SearchBar = styled.div`
     width: 100%; 
     max-width: 700px; 
@@ -166,31 +192,20 @@ const SearchButton = styled.div`
   }
 `
 
-const AddContentButton = styled.div`
-  position: relative;
-  width: max-content;
-  @media only screen and (max-width: 600px){
-    z-index: 20;
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-  }
-`
-
-// Style for header components
+// Style for footer components
 const Footer = styled.footer`
- bottom: auto;
- width: 100%;
- display: flex;
- flex-wrap: wrap;
- justify-content: space-around;
- box-sizing: border-box;
- padding: 30px 50px;
- align-items: center;
- background-color: #1b261e;
- @media only screen and (max-width: 600px){
-  flex-direction: column;
- }
+  bottom: auto;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  box-sizing: border-box;
+  padding: 30px 50px;
+  align-items: center;
+  background-color: #1b261e;
+  @media only screen and (max-width: 600px){
+    flex-direction: column;
+  }
 `
 
 const Nav = styled.span`
@@ -205,7 +220,7 @@ const Nav = styled.span`
  }
 `
 
-const PC = styled.p`
+const Copyright = styled.p`
  color:white;
  text-align:center;
 `
@@ -223,32 +238,6 @@ const Li = styled.li`
  &:hover{
   background-color: #4EAA4B;
   color:white;
- }
-`
-
-const DropDownMenu = styled.ul`
- position: absolute;
- list-style: none;
- background-color: white;
- border: solid 1.5px #499C44;
- width: 100%;
- padding: 5px;
- box-sizing: border-box;
- left: 0;
- top: 2em;
- border-radius: 5px;
- z-index: 10;
- @media only screen and (max-width: 600px){
-  translate: calc(-100% + 40px) calc(-100% - 55px);
-  width: max-content;
- }
-`
-
-const AddText = styled.p`
- margin: 0;
- display: block;
- @media only screen and (max-width: 600px){
-  display: none;
  }
 `
 
@@ -272,6 +261,18 @@ const Submit = styled.input`
          background-color: #418E3E;
     };`
 
+const AddContentButton = styled.div`
+  position: relative;
+  width: max-content;
+  @media only screen and (max-width: 600px){
+    z-index: 20;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+  }
+`
+
+// style for options availble to admin
 const Options = styled.div`
     position: absolute;
     left: 0;
@@ -321,7 +322,7 @@ const OptionsTool = styled.button`
     `};
 `;
 
-
+//  style for view content page
 const CoverImg = styled.img`
   height: 100%;
   width: 15em;
@@ -360,18 +361,6 @@ const Description = styled.div`
   margin: 15px 0;
   
 `;
-const TitreAudio = styled.h1`
-font-size: 32px;
-  margin: 0;
-  color: #73a580;
-  text-align:center;
-`
-const CoverImgAudio = styled.img`
-  height:100%;
-  width: 100%;
-  border: solid .5px black;
-  border-radius: 10px;
-`
 
 const Responsive = styled.div`
   width: 100%;
@@ -401,11 +390,13 @@ function CardUI(btn) {
   const [routeCheckout, setRouteCheckout] = useState();
   const [viewRate, setViewRate] = useState(0);
   let isDeleted = sessionStorage;
+
+  // check for the route path name
   useEffect(() => {
-    // console.log(route.pathname.match(/dashbord/));
     setRouteCheckout(route.pathname)
   }, [route.pathname])
 
+  // track users clicked content to costumize what they want to see
   useEffect(() => {
     if (viewRate) {
       const data = {
@@ -435,7 +426,7 @@ function CardUI(btn) {
       }
     )
       .then((Response) => console.log(Response.json()))
-    
+
     isDeleted.setItem('isDeleted', true)
   }
 
@@ -443,6 +434,7 @@ function CardUI(btn) {
     <CardDisplay>
       <div style={{ position: "relative" }}>
         <div style={{ position: "relative", height: '20em', marginBottom: '7px' }}>
+          {/* Check content type to give it the propre cover size */}
           {btn.type === 'فيديو' ?
             <CoverVideo src={`/Database/images/${btn.imgSrc}`} alt={btn.title} />
             :
@@ -451,6 +443,7 @@ function CardUI(btn) {
           }
           <span style={{ position: "absolute", right: "0", top: "0", padding: "7px 15px", fontSize: "12px", fontWeight: "600", color: btn.tag === "كتاب" ? "#fff" : "#2d2d2", margin: "5px", borderRadius: "10px", backgroundColor: btn.tag === "كتاب" ? "#FF3636" : btn.tag === "فيديو" ? "#FFC736" : "#8EFF36" }}>{btn.tag}</span>
           {
+            // check if current user is in the dashbord page and add option for him
             routeCheckout && routeCheckout.match(/dashbord/) ?
               <Options className='options'>
                 {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
@@ -465,7 +458,6 @@ function CardUI(btn) {
               </Options>
               :
               <Options>
-                {/* <More onClick={() => navigate(`/view/${btn.type === 'كتاب' ? 'Books' : btn.type === 'فيديو' ? 'Video' : 'Audio'}/${btn.id}`)}>more</More> */}
                 <OptionsTool onClick={() => setViewRate(viewRate + 1)}>
                   <FontAwesomeIcon icon={faEye}></FontAwesomeIcon>
                   <p style={{ display: 'inline', marginRight: '15px' }}>المزيد</p>
@@ -489,7 +481,6 @@ function Head() {
   const isInsideSearchBar = useRef();
   const [listVisiblity, setListVisiblity] = useState(false)
   const [allContent, setAllContent] = useState([]);
-  // const [searchButtonVisibility, setSearchButtonVisibility] = useState(false)
   const [iconHoverBook, setIconHoverBook] = useState(false);
   const [iconHoverAudio, setIconHoverAudio] = useState(false);
   const [iconHoverVideo, setIconHoverVideo] = useState(false);
@@ -498,7 +489,7 @@ function Head() {
   const { user } = useParams();
   const navigate = useNavigate();
 
-
+  // Hook that take the user search query and match it with right content
   useEffect(() => {
     fetch(`http://localhost:7000/Books?title_like=^${searchQuery}`,
       {
@@ -538,13 +529,16 @@ function Head() {
     }
   }
 
+
   useEffect(() => {
     window.onclick = (e) => {
+      // check if user has clicked in the add button
       if (e.target.parentElement === insideButton.current || e.target === insideButton.current) {
         setMenuToggel(true);
       } else {
         setMenuToggel(false);
       }
+      // check if user has clicked in the search icon
       if (window.innerWidth <= 775) {
         if (e.target.parentElement === insideButton.current || e.target === SearchOpen.current) {
           setSearchBarVisiblity(true);
@@ -552,6 +546,7 @@ function Head() {
       }
     }
 
+    //  show result for users only if he search somthing
     if (searchQuery) {
       setListVisiblity(true)
     } else {
@@ -596,7 +591,7 @@ function Head() {
               <AddContentButton>
                 <Button admin ref={insideButton}>
                   <FontAwesomeIcon icon={faPlusCircle}></FontAwesomeIcon>
-                  <AddText>أضف محتوى</AddText>
+                  <AddButton>أضف محتوى</AddButton>
                 </Button>
                 <DropDownMenu style={{ display: menuToggel ? "block" : "none" }}>
                   <Link to="/admin/book" style={{ textDecoration: "auto", color: 'black' }}><Li onMouseEnter={() => setIconHoverBook(true)} onMouseLeave={() => setIconHoverBook(false)}><FontAwesomeIcon icon={faBook} color={iconHoverBook ? "#ffff" : "#4EAA4B"} /><p style={{ margin: 0, display: "inline", marginRight: "10px" }}>كتاب</p></Li></Link>
@@ -687,7 +682,7 @@ function Foot() {
         <Link to={`/${user}/Audios`}><Nav>أوديو</Nav></Link>
       </div>
       <div>
-        <PC>© جميع الحقوق محفوظة لموقع مكتبتي</PC>
+        <Copyright>© جميع الحقوق محفوظة لموقع مكتبتي</Copyright>
       </div>
     </Footer>
   )
@@ -763,7 +758,7 @@ function AddPage({ contentType }) {
       }).then((Response) => console.log(Response))
       .then((data) => console.log(data))
       .catch((error) => console.error(error))
-    
+
     // if the content has been added the admin is been redirects to the dashboard and get notified with a message
     redirect(`/${user}/dashbord`)
     NewAddedContent.setItem('isAdded', true);
@@ -975,7 +970,7 @@ function UpdatePage({ contentType }) {
   const [getData, setGetData] = useState(null);
   let { id, type } = useParams();
 
-
+  // function that handel admin update
   let HandelForm = (e) => {
     e.preventDefault();
 
@@ -1020,6 +1015,7 @@ function UpdatePage({ contentType }) {
       <>
         <div style={{ maxWidth: "58em", margin: "2em auto 5em", padding: " 0 4em", boxSizing: "border-box" }}>
           <h1 style={{ fontSize: "42px" }}>كتاب</h1>
+          {/* get content data that willing to be updated */}
           {getData && getData.map((content) => content.id === parseInt(id) && <div key={content.id}>
             <div style={{ display: "flex", gap: "30px", flexWrap: "wrap" }}>
               <div style={{ flex: 1, cursor: "pointer" }}>
@@ -1029,19 +1025,12 @@ function UpdatePage({ contentType }) {
 
                     <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
 
-                    { // :
-                      // <p>
-                      //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
-                      //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
-                      // </>
-                    }
                     <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                   </div>
                 </label>
               </div>
 
               <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
-                {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
                 <input value={content.id} hidden disabled />
                 {!currentId && setCurrentId(content.id)}
                 <div style={{ display: "flex", flexDirection: "column" }}>
@@ -1064,12 +1053,6 @@ function UpdatePage({ contentType }) {
 
                       <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFilePdf} size="2xl" color="red" /></span>
 
-                      {
-                        // <p>
-                        //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                        //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
-                        // </>
-                      }
                       <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                     </div>
                   </label>
@@ -1132,12 +1115,6 @@ function UpdatePage({ contentType }) {
 
                         <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFileAudio} size="2xl" color="red" /></span>
 
-                        {
-                          // <p>
-                          //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                          //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
-                          // </>
-                        }
                         <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                       </div>
                     </label>
@@ -1163,20 +1140,12 @@ function UpdatePage({ contentType }) {
                       {newPhoto.empty && setNewPhoto({ value: content.img })}
 
                       <img style={{ objectFit: "cover", width: "100%" }} src={`/Database/images/${newPhoto.value}`} alt={contentType} />
-
-                      { // :
-                        // <p>
-                        //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "20px", borderRadius: "100%" }} icon={faCamera} size="xl" color="#999" />
-                        //   <p style={{ backgroundColor: "#9993", color: "#777", fontSize: "18px", margin: "0", position: "absolute", bottom: "0", width: "100%", textAlign: "center", padding: "12px 0", borderRadius: "10px 10px 0 0" }}>إختر صورة</p>
-                        // </>
-                      }
                       <input type="file" className="uploadFile" id="uploadImage" onChange={(e) => e.target.files[0].name && setNewPhoto({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                     </div>
                   </label>
                 </div>
 
                 <form onSubmit={(e) => HandelForm(e)} style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}>
-                  {/* <form style={{ flex: 2, cursor: "pointer", display: "flex", flexDirection: "column", rowGap: "15px" }}> */}
                   <input value={content.id} hidden disabled />
                   {!currentId && setCurrentId(content.id)}
                   <div style={{ display: "flex", flexDirection: "column" }}>
@@ -1199,12 +1168,6 @@ function UpdatePage({ contentType }) {
 
                         <span style={{ fontSize: "18px", display: "flex" }}>{newFile.value}<FontAwesomeIcon style={{ margin: "0 12px" }} icon={faFileVideo} size="2xl" color="red" /></span>
 
-                        {
-                          // <p>
-                          //   <FontAwesomeIcon style={{ backgroundColor: "#9993", padding: "18px 16px", borderRadius: "100%" }} icon={faCloudUpload} size="lg" color="#999" />
-                          //   <p style={{ color: "#777", fontSize: "16px", margin: "0", width: "100%", textAlign: "center", padding: "12px 0" }}>إختر صورة</p>
-                          // </>
-                        }
                         <input className="uploadFile" type="file" name="upload" id="upload" onChange={(e) => e.target.files[0].name && setNewFile({ value: e.target.files[0].name, empty: e.target.files[0].name ? false : true })} />
                       </div>
                     </label>

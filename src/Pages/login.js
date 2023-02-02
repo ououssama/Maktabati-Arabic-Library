@@ -111,39 +111,41 @@ function Login() {
   const [pass, setPass] = useState("");
   const [userAuth, setUserAuth] = useState(true);
   const [passAuth, setPassAuth] = useState(true);
-    let bridge = useNavigate();
+  let bridge = useNavigate();
 
+  // this function get called directly after the user has fill the form with the valid data by he redirect him to page that meet his account type
   const handleForm = (e) => {
     e.preventDefault();
-      if (adminUser.username === userName && adminUser.pass === pass) {
-          bridge("/admin");
-      } else if (regularUser.username === userName && regularUser.pass === pass) {
-          bridge("/user")
-      } else {
-          console.log("invalid user");
-      }
+    if (adminUser.username === userName && adminUser.pass === pass) {
+      bridge("/admin");
+    } else if (regularUser.username === userName && regularUser.pass === pass) {
+      bridge("/user")
+    } else {
+      console.log("invalid user");
+    }
   };
-// la function de test l input 
-const  handlerTest=()=>{
-  if (userName === regularUser.username) {
-    setUserAuth(true);
-    if ( pass === regularUser.pass) {
-      setPassAuth(true);
-    } else {
-      setPassAuth(false)
-    }
-  } else if (userName === adminUser.username) {
-    setUserAuth(true);
-    if ( pass === adminUser.pass) {
-      setPassAuth(true);
-    } else {
-      setPassAuth(false)
-    }
-  } else {
-    setUserAuth(false);
-  }
 
-}
+  // check if the user given data matches the stored accounts information and throw a descriptif message for the false data
+  const handlerTest = () => {
+    if (userName === regularUser.username) {
+      setUserAuth(true);
+      if (pass === regularUser.pass) {
+        setPassAuth(true);
+      } else {
+        setPassAuth(false)
+      }
+    } else if (userName === adminUser.username) {
+      setUserAuth(true);
+      if (pass === adminUser.pass) {
+        setPassAuth(true);
+      } else {
+        setPassAuth(false)
+      }
+    } else {
+      setUserAuth(false);
+    }
+
+  }
   return (
     <>
       <Container>
@@ -151,12 +153,12 @@ const  handlerTest=()=>{
           <H1>مكتبتي</H1>
           <InputContainer>
             {" "}
-          <Label>اسم المستخدم</Label>
+            <Label>اسم المستخدم</Label>
             <Input
               type='text'
               id='name'
               onChange={(e) => setUserName(e.target.value)}
-            /><span style={{display: userAuth? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline'}}>اسم المستخدم خطا المرجو المحاولة مرة اخرى</p></span>
+            /><span style={{ display: userAuth ? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline' }}>اسم المستخدم خطا المرجو المحاولة مرة اخرى</p></span>
           </InputContainer>
 
           <InputContainer>
@@ -166,7 +168,7 @@ const  handlerTest=()=>{
               id='password'
               onChange={(e) => setPass(e.target.value)}
             />
-            <span style={{ display: passAuth? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline'}}>الرقم السري خطا المرجو المحاولة مرة اخرى</p></span>
+            <span style={{ display: passAuth ? 'none' : 'block', backgroundColor: 'orangered', color: 'white', borderRadius: '5px', padding: '12px' }}><FontAwesomeIcon icon={faCircleExclamation} style={{ marginLeft: '7px' }} /><p style={{ display: 'inline' }}>الرقم السري خطا المرجو المحاولة مرة اخرى</p></span>
           </InputContainer>
 
           <SubmitBtn type='submit' value="تسجيل الدخول" onClick={handlerTest} />

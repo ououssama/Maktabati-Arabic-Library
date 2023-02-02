@@ -11,41 +11,34 @@ export default function ViewContent() {
   const [allContent, setAllContent] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:7000/Books/`,
-      {
+    fetch(`http://localhost:7000/Books`,
+    {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+            "Content-Type": "application/json"
         },
-      }).then((Response) => Response.json())
-      .then((data) => setBooks(data))
-
-    fetch(`http://localhost:7000/Audio/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then((Response) => Response.json())
-      .then((data) => setaudios(data))
-    fetch(`http://localhost:7000/Video/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then((Response) => Response.json())
-      .then((data) => setvideos(data))
+    }).then((Response) => Response.json())
+    .then((data) => data)
+    .then((data2) =>
+        fetch(`http://localhost:7000/Audio`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }).then((Response) => Response.json())
+            .then((data) => [...data2, ...data])
+    ).then((data3) =>
+        fetch(`http://localhost:7000/Video`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }).then((Response) => Response.json())
+            .then((data) => setAllContent([...data3, ...data])))
 
   }, [])
-
-
-  useEffect(() => {
-    (books.length || videos.length || audios.length) && setAllContent([books, audios, videos])
-  }, [books, audios, videos])
-
-
-  // console.log(allContent.Audio);
 
   return (
     <>
@@ -54,7 +47,7 @@ export default function ViewContent() {
         <div style={{display:'flex', justifyContent:'center'}}>
           {
             allContent?
-              allContent.map((eachContent) => eachContent.map((Content, i) => (Content.id === parseInt(id) && Content.tag === (type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'أديو')) && <DetailPage key={i} img={Content.img} title={Content.title} author={Content.author} type={Content.tag} video={Content.file} audio={Content.file} pdf={Content.file} tag={Content.tag} description={ Content.description } />))
+              allContent.map((eachContent, i) => (eachContent.id === parseInt(id) && eachContent.tag === (type === 'Books' ? 'كتاب' : type === 'Video' ? 'فيديو' : 'أديو')) && <DetailPage key={i} img={eachContent.img} title={eachContent.title} author={eachContent.author} type={eachContent.tag} video={eachContent.file} audio={eachContent.file} pdf={eachContent.file} tag={eachContent.tag} description={ eachContent.description } />)
               :
               <div className="Loader" style={{ height: "calc(100vh - (40px * 2) * 2)" }}>
                 <div className="dots">

@@ -14,7 +14,6 @@ const ContentContainer = styled.div`
 export default function AllContents() {
 
     const [allContent, setAllContent] = useState(null);
-    // const { user } = useParams()
 
     useEffect(() => {
         fetch(`http://localhost:7000/Books`,
@@ -49,22 +48,22 @@ export default function AllContents() {
         <>
             <Head />
             <div>
-                    {
-                         allContent?
+                {
+                    allContent ?
                         <ContentContainer>
-                            {allContent.sort(((a,b) => b.impression - a.impression)).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression}/>)}
+                            {allContent.sort(((a, b) => b.impression - a.impression)).map((Content, i) => <CardUI key={i} imgSrc={Content.img} tag={Content.tag} title={Content.title} author={Content.author} id={Content.id} type={Content.tag} impression={Content.impression} />)}
                         </ContentContainer>
-                           :
-                            <div className="Loader" style={{height:"calc(100vh - 180px)"}}>
-                                <div className="dots">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                                <p>جاري التحميل</p>
+                        :
+                        <div className="Loader" style={{ height: "calc(100vh - 180px)" }}>
+                            <div className="dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
                             </div>
-                    }
+                            <p>جاري التحميل</p>
+                        </div>
+                }
             </div>
             <Foot />
         </>
